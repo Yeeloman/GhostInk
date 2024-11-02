@@ -183,7 +183,7 @@ class Taskara:
         Return the relative path and line number of the code file
         calling this method, relative to the project's base directory.
         """
-        caller_frame = inspect.stack()[2]
+        caller_frame = inspect.stack()[1]
         full_path = caller_frame.filename
         relative_path = os.path.relpath(full_path, start=self.project_root)
         return relative_path, caller_frame.lineno, caller_frame.function
