@@ -85,7 +85,11 @@ except Exception:
 task_manager.print()
 ```
 
-![output ](assets/output.png)
+![output ](assets/o.png)
+
+## Inspired By
+
+This project is inspired by the [icecream](https://github.com/gruns/icecream) library.
 
 ## Contributing
 
