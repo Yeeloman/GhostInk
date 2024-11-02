@@ -94,7 +94,3 @@ This project is inspired by the [icecream](https://github.com/gruns/icecream) li
 ## Contributing
 
 Contributions are welcome! If you have suggestions or improvements, please create a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

@@ -4,26 +4,33 @@ import json
 import inspect
 from datetime import datetime
 from enum import Enum
+from colorama import Fore, Style, init
+
+# Initialize colorama
+init(autoreset=True)
 
 
-class Taskara():
+class Taskara:
     """
     Prints file name, line number, function name, and timestamp of the method call.
     """
+
     class mode(Enum):
-        '''
+        """
         Defines an Enum class 'mode' with options:
         - TODO: Represents a task to be done.
         - DEBUG: Represents debug information.
         - INFO: Represents informational messages.
         - ERROR: Represents warning messages.
-        '''
+        """
+
         TODO = "TODO"
         INFO = "INFO"
         DEBUG = "DEBUG"
+        WARN = "WARN"
         ERROR = "ERROR"
 
-    def __init__(self, project_root='.'):
+    def __init__(self, project_root="."):
         self.tasks = set()
         self.project_root = project_root
 
@@ -57,15 +64,21 @@ class Taskara():
         caller_func = caller_frame.function  # Function name
 
         # Get the current timestamp
-        timestamp = datetime.now().strftime('%H:%M:%S')  # Time down to milliseconds
+        timestamp = datetime.now().strftime("%H:%M:%S")  # Time down to milliseconds
 
         if msg:
             print(msg)
-            print(f"\033[1;33m└──{caller_file}\033[0m:\033[1;95m{
-                caller_line}\033[0m in \033[1;91m{caller_func}()\033[0m at {timestamp}")
+            print(
+                f"{Style.BRIGHT}{Fore.YELLOW}└── {caller_file}{Style.RESET_ALL}:"
+                f"{Style.BRIGHT}{Fore.MAGENTA}{caller_line}{Style.RESET_ALL} in "
+                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {timestamp}"
+            )
         else:
-            print(f"\033[1;33m{caller_file}\033[0m:\033[1;95m{
-                caller_line}\033[0m in \033[1;91m{caller_func}()\033[0m at {timestamp}")
+            print(
+                f"{Style.BRIGHT}{Fore.YELLOW}{caller_file}{Style.RESET_ALL}:"
+                f"{Style.BRIGHT}{Fore.MAGENTA}{caller_line}{Style.RESET_ALL} in "
+                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {timestamp}"
+            )
 
     def add_task(self, task_input, mode=mode.TODO):
         """
@@ -90,8 +103,11 @@ class Taskara():
 
         if mode in [self.mode.ERROR, self.mode.DEBUG]:
             stack_trace = traceback.format_stack()
-            task_text += f"\nStack Trace:\n{
-                ''.join(stack_trace)}"
+            colored_stack_trace = "".join(
+                f"{Style.BRIGHT}{Fore.RED + Style.DIM}{line}{Style.RESET_ALL}"
+                for line in stack_trace
+            )
+            task_text += f"\nStack Trace:\n{colored_stack_trace}"
 
         formatted_task = (mode, task_text, relative_path, line_no, func_name)
 
@@ -108,13 +124,14 @@ class Taskara():
         """
         # Display Title
         title = "TaskManager"
-        print(f"\n\033[1;4;36m{title:^23}\033[0m\n")
+        print(f"\n{Style.BRIGHT}{Fore.CYAN}{title:^23}{Style.RESET_ALL}\n")
 
         # Filter and sort tasks
         filtered_tasks = [
-            task for task in self.tasks
-            if (filter_mode is None or task[0] == filter_mode) and
-            (filter_filename is None or task[2] == filter_filename)
+            task
+            for task in self.tasks
+            if (filter_mode is None or task[0] == filter_mode)
+            and (filter_filename is None or task[2] == filter_filename)
         ]
         sorted_tasks = sorted(filtered_tasks, key=lambda x: x[0].value)
 
@@ -124,20 +141,19 @@ class Taskara():
 
         # Caller information
         caller_frame = inspect.stack()[1]
-        caller_file = os.path.relpath(
-            caller_frame.filename, start=self.project_root)
+        caller_file = os.path.relpath(caller_frame.filename, start=self.project_root)
         caller_line = caller_frame.lineno
 
         print(
-            f"\n\033[1;36mPrinted\033[0m from: \033[1;31m{
-                caller_file}\033[0m at line \033[1;33m{caller_line}\033[0m"
+            f"\n{Fore.CYAN}Printed{Style.RESET_ALL} from: {Fore.RED}{caller_file}{Style.RESET_ALL} at line {Fore.YELLOW}{caller_line}{Style.RESET_ALL}"
         )
         print(
-            "\033[1;31mReview completed tasks and remove them as necessary.\033[0m\n")
+            f"{Fore.RED + Style.BRIGHT}Review completed tasks and remove them as necessary.{Style.RESET_ALL}\n"
+        )
 
     def _color_text(self, mode, text=""):
         """
-        Color the text based on the debug mode.
+        Color the text based on the debug mode using colorama.
 
         Parameters:
         - text (str): The text to color.
@@ -147,16 +163,20 @@ class Taskara():
         - str: Colored text.
         """
         colors = {
-            self.mode.TODO: '\033[1;33m',
-            self.mode.DEBUG: '\033[1;34m',
-            self.mode.INFO: '\033[1;35m',
-            self.mode.ERROR: '\033[1;31m',
-            'reset': '\033[0m'
+            self.mode.TODO: Fore.YELLOW,
+            self.mode.DEBUG: Fore.BLUE,
+            self.mode.INFO: Fore.MAGENTA,
+            self.mode.WARN: Fore.RED,
+            self.mode.ERROR: Fore.RED + Style.BRIGHT,
         }
+
+        # Choose the color for the mode
+        color = colors.get(mode, Style.RESET_ALL)
+
         if text == "":
-            return f"{colors.get(mode, colors['reset'])}{mode.name}{colors['reset']}"
+            return f"{color}{mode.name}{Style.RESET_ALL}"
         else:
-            return f"{colors.get(mode, colors['reset'])}{text}{colors['reset']}"
+            return f"{color}{text}{Style.RESET_ALL}"
 
     def _get_relative_path(self):
         """
@@ -192,7 +212,9 @@ class Taskara():
             return task_input  # Directly return strings
         elif hasattr(task_input, "__dict__"):
             # Format custom objects using their attributes
-            return ", ".join(f"{key}: {value}" for key, value in vars(task_input).items())
+            return ", ".join(
+                f"{key}: {value}" for key, value in vars(task_input).items()
+            )
         else:
             # Handle other data types or raise a warning
             return str(task_input)  # Convert any other type to string
