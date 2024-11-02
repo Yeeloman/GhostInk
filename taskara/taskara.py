@@ -2,6 +2,7 @@ import os
 import traceback
 import json
 import inspect
+import logging
 from datetime import datetime
 from enum import Enum
 from colorama import Fore, Style, init
@@ -30,10 +31,57 @@ class Taskara:
         WARN = "WARN"
         ERROR = "ERROR"
 
-    def __init__(self, title: str = "Taskara", project_root: str = "."):
+    def __init__(
+        self,
+        title: str = "Taskara",
+        project_root: str = ".",
+        log_to_file: bool = False,
+        log_file: str = "taskara.log"
+    ):
         self.title = title
         self.tasks = set()
         self.project_root = project_root
+        self.log_to_file = log_to_file
+        self.log_file = log_file
+        self.logger = None
+
+        if log_to_file:
+            self._setup_logger(log_file)
+
+    def _setup_logger(self, log_file, log_level=logging.DEBUG):
+        """
+        Sets up a logger that logs messages to a specified file in a logs directory at the project root.
+        """
+        # Get the project root by navigating up from the current file's directory
+        base_dir = self.project_root
+
+        # Define the path for the logs directory at the project root
+        log_dir = os.path.join(base_dir, "logs")
+
+        # Ensure the logs directory exists
+        os.makedirs(log_dir, exist_ok=True)
+
+        # Define the full path for the log file
+        log_file_path = os.path.join(log_dir, log_file)
+
+        # Set up logging
+        self.logger = logging.getLogger(__name__)
+
+        # Avoid adding duplicate handlers
+        if not self.logger.hasHandlers():
+            self.logger.setLevel(log_level)
+
+            # File handler to output logs to the specified file
+            file_handler = logging.FileHandler(log_file_path)
+            file_handler.setLevel(log_level)
+
+            # Formatter including timestamp, level, and message
+            formatter = logging.Formatter(
+                "%(asctime)s - %(levelname)s - %(message)s")
+            file_handler.setFormatter(formatter)
+
+            # Add the handler to the logger
+            self.logger.addHandler(file_handler)
 
     def set_mode(self, new_mode: mode) -> None:
         """
@@ -70,15 +118,20 @@ class Taskara:
         if msg:
             print(msg)
             print(
-                f"{Style.BRIGHT}{Fore.YELLOW}└── {caller_file}{Style.RESET_ALL}:"
-                f"{Style.BRIGHT}{Fore.MAGENTA}{caller_line}{Style.RESET_ALL} in "
-                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {timestamp}"
+                f"{Style.BRIGHT}{Fore.YELLOW}└── {
+                    caller_file}{Style.RESET_ALL}:"
+                f"{Style.BRIGHT}{Fore.MAGENTA}{
+                    caller_line}{Style.RESET_ALL} in "
+                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {
+                    timestamp}"
             )
         else:
             print(
                 f"{Style.BRIGHT}{Fore.YELLOW}{caller_file}{Style.RESET_ALL}:"
-                f"{Style.BRIGHT}{Fore.MAGENTA}{caller_line}{Style.RESET_ALL} in "
-                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {timestamp}"
+                f"{Style.BRIGHT}{Fore.MAGENTA}{
+                    caller_line}{Style.RESET_ALL} in "
+                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {
+                    timestamp}"
             )
 
     def add_task(self, task_input: any, mode: mode = mode.TODO) -> None:
@@ -124,7 +177,8 @@ class Taskara:
         - filter_filename (str): The filename to filter tasks by (default: None).
         """
         # Display Title
-        print(f"\n{Style.BRIGHT}{Fore.CYAN}{self.title:^23}{Style.RESET_ALL}\n")
+        print(f"\n{Style.BRIGHT}{Fore.CYAN}{
+              self.title:^23}{Style.RESET_ALL}\n")
 
         # Filter and sort tasks
         filtered_tasks = [
@@ -138,14 +192,19 @@ class Taskara:
         # Print tasks
         for task_mode, task, file, line, func in sorted_tasks:
             print(self._format_task(task_mode, task, file, line, func))
+            if self.log_to_file:
+                self.logger.debug(
+                    f"[{task_mode.name}] - {task} - {file}:{line} in {func}")
 
         # Caller information
         caller_frame = inspect.stack()[1]
-        caller_file = os.path.relpath(caller_frame.filename, start=self.project_root)
+        caller_file = os.path.relpath(
+            caller_frame.filename, start=self.project_root)
         caller_line = caller_frame.lineno
 
         print(
-            f"\n{Fore.CYAN}Printed{Style.RESET_ALL} from: {Fore.RED}{caller_file}{Style.RESET_ALL} at line {Fore.YELLOW}{caller_line}{Style.RESET_ALL}"
+            f"\n{Fore.CYAN}Printed{Style.RESET_ALL} from: {Fore.RED}{caller_file}{
+                Style.RESET_ALL} at line {Fore.YELLOW}{caller_line}{Style.RESET_ALL}"
         )
         print(
             f"{Fore.RED + Style.BRIGHT}Review completed tasks and remove them as necessary.{Style.RESET_ALL}\n"
@@ -183,7 +242,7 @@ class Taskara:
         Return the relative path and line number of the code file
         calling this method, relative to the project's base directory.
         """
-        caller_frame = inspect.stack()[1]
+        caller_frame = inspect.stack()[2]
         full_path = caller_frame.filename
         relative_path = os.path.relpath(full_path, start=self.project_root)
         return relative_path, caller_frame.lineno, caller_frame.function
@@ -229,7 +288,7 @@ class Taskara:
         Returns:
         - str: The formatted string.
         """
-        return f"[{self._color_text(mode)}] {task}\n(Ln:{self._color_text(mode, line)} - {file} in {func})"
+        return f"[{self._color_text(mode)}] {task}\n(Ln:{self._color_text(mode, line)} - {func} in {file})"
 
 
 __all__ = ["Taskara"]
