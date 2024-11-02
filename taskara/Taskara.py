@@ -30,11 +30,12 @@ class Taskara:
         WARN = "WARN"
         ERROR = "ERROR"
 
-    def __init__(self, project_root="."):
+    def __init__(self, title: str = "Taskara", project_root: str = "."):
+        self.title = title
         self.tasks = set()
         self.project_root = project_root
 
-    def set_mode(self, new_mode):
+    def set_mode(self, new_mode: mode) -> None:
         """
         Set the mode of the Taskara instance to the specified new_mode.
 
@@ -48,7 +49,7 @@ class Taskara:
         else:
             self.mode = self.mode.TODO
 
-    def ln(self, msg: str = None):
+    def ln(self, msg: str = None) -> None:
         """
         Prints the file name, line number, function name, and timestamp of where this method is called.
 
@@ -80,7 +81,7 @@ class Taskara:
                 f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {timestamp}"
             )
 
-    def add_task(self, task_input, mode=mode.TODO):
+    def add_task(self, task_input: any, mode: mode = mode.TODO) -> None:
         """
         Add a task with specified text and mode to the Debugger's
         task list if it's not already present.
@@ -101,7 +102,7 @@ class Taskara:
 
         relative_path, line_no, func_name = self._get_relative_path()
 
-        if mode in [self.mode.ERROR, self.mode.DEBUG]:
+        if mode in [self.mode.ERROR, self.mode.DEBUG, self.mode.WARN]:
             stack_trace = traceback.format_stack()
             colored_stack_trace = "".join(
                 f"{Style.BRIGHT}{Fore.RED + Style.DIM}{line}{Style.RESET_ALL}"
@@ -114,7 +115,7 @@ class Taskara:
         if formatted_task not in self.tasks:
             self.tasks.add(formatted_task)
 
-    def print(self, filter_mode=None, filter_filename=None):
+    def print(self, filter_mode: str = None, filter_filename: str = None) -> None:
         """
         Prints filtered and sorted tasks based on the provided filter_mode and filter_filename.
 
@@ -123,8 +124,7 @@ class Taskara:
         - filter_filename (str): The filename to filter tasks by (default: None).
         """
         # Display Title
-        title = "TaskManager"
-        print(f"\n{Style.BRIGHT}{Fore.CYAN}{title:^23}{Style.RESET_ALL}\n")
+        print(f"\n{Style.BRIGHT}{Fore.CYAN}{self.title:^23}{Style.RESET_ALL}\n")
 
         # Filter and sort tasks
         filtered_tasks = [
@@ -151,7 +151,7 @@ class Taskara:
             f"{Fore.RED + Style.BRIGHT}Review completed tasks and remove them as necessary.{Style.RESET_ALL}\n"
         )
 
-    def _color_text(self, mode, text=""):
+    def _color_text(self, mode: mode, text: str = "") -> None:
         """
         Color the text based on the debug mode using colorama.
 
@@ -178,7 +178,7 @@ class Taskara:
         else:
             return f"{color}{text}{Style.RESET_ALL}"
 
-    def _get_relative_path(self):
+    def _get_relative_path(self) -> tuple[str, int, str]:
         """
         Return the relative path and line number of the code file
         calling this method, relative to the project's base directory.
@@ -188,7 +188,7 @@ class Taskara:
         relative_path = os.path.relpath(full_path, start=self.project_root)
         return relative_path, caller_frame.lineno, caller_frame.function
 
-    def _format_task_from_object(self, task_input):
+    def _format_task_from_object(self, task_input: any) -> str:
         """
         Convert a dictionary or object to a string
         representation suitable for a task.
@@ -219,7 +219,7 @@ class Taskara:
             # Handle other data types or raise a warning
             return str(task_input)  # Convert any other type to string
 
-    def _format_task(self, mode, task, file, line, func):
+    def _format_task(self, mode, task, file, line, func) -> str:
         """
         Formats a task for printing.
 
