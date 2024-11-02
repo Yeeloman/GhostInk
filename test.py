@@ -1,18 +1,16 @@
-from Taskara import Taskara as TK
+from Taskara import Taskara
 
+task_manager = Taskara()
 
-tk = TK()
+task_manager.add_task("Initial setup", mode=Taskara.mode.TODO)
+task_manager.ln("Setting up database connection")
 
-tk.ln()
-tk.ln("text")
-context = {
-    'hi': "testing",
-    "another": "teeeest"
-}
-tk.add_task("this is first task", TK.mode.TODO)
-tk.add_task("this is 2d task", TK.mode.WARN)
-tk.add_task("this is third task", TK.mode.INFO)
-tk.add_task(context, TK.mode.DEBUG)
-tk.add_task(['test', "test2"], TK.mode.DEBUG)
-tk.print()
-# tk.print_all()
+# Simulate an error condition
+try:
+    # some code that raises an exception
+    raise Exception("Simulated error")
+except Exception:
+    task_manager.add_task("Error occurred", mode=Taskara.mode.ERROR)
+
+# Print all tasks
+task_manager.print()

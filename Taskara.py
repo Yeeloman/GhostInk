@@ -16,12 +16,12 @@ class Taskara():
         - TODO: Represents a task to be done.
         - DEBUG: Represents debug information.
         - INFO: Represents informational messages.
-        - WARN: Represents warning messages.
+        - ERROR: Represents warning messages.
         '''
         TODO = "TODO"
-        DEBUG = "DEBUG"
         INFO = "INFO"
-        WARN = "WARN"
+        DEBUG = "DEBUG"
+        ERROR = "ERROR"
 
     def __init__(self, project_root='.'):
         self.tasks = set()
@@ -71,14 +71,14 @@ class Taskara():
         """
         Add a task with specified text and mode to the Debugger's
         task list if it's not already present.
-        
+
         Parameters:
         - task_input (str or dict or object): The text or object to be added as a task.
         - mode (Taskara.mode): The mode of the task (default: Taskara.mode.TODO).
-        
+
         If task_input is a dictionary or object, it is formatted using _format_task_from_object method.
         The relative path, line number, and function name of the caller are obtained using _get_relative_path method.
-        If mode is WARN or DEBUG, stack trace is added to the task text.
+        If mode is ERROR or DEBUG, stack trace is added to the task text.
         The task is added to the task list if it's not already present.
         """
         if isinstance(task_input, str):
@@ -88,7 +88,7 @@ class Taskara():
 
         relative_path, line_no, func_name = self._get_relative_path()
 
-        if mode in [self.mode.WARN, self.mode.DEBUG]:
+        if mode in [self.mode.ERROR, self.mode.DEBUG]:
             stack_trace = traceback.format_stack()
             task_text += f"\nStack Trace:\n{
                 ''.join(stack_trace)}"
@@ -150,7 +150,7 @@ class Taskara():
             self.mode.TODO: '\033[1;33m',
             self.mode.DEBUG: '\033[1;34m',
             self.mode.INFO: '\033[1;35m',
-            self.mode.WARN: '\033[1;31m',
+            self.mode.ERROR: '\033[1;31m',
             'reset': '\033[0m'
         }
         if text == "":
