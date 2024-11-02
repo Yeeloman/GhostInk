@@ -85,7 +85,8 @@ except Exception:
 task_manager.print()
 ```
 
-![output ](assets/output.png)
+<!--![output ](assets/output.png)-->
+
 ## Contributing
 
 Contributions are welcome! If you have suggestions or improvements, please create a pull request.
