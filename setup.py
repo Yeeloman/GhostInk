@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="taskaraCore",
+    name="GhoslInk",
     version="0.0.1",
     packages=find_packages(),
     author="Yeeloman",
@@ -9,7 +9,7 @@ setup(
     description="A task management tool for developers.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/Yeeloman/Taskara",
+    url="https://github.com/Yeeloman/GhostInk",
     install_requires=["colorama"],
     keywords=[
         "task management",
