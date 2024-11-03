@@ -1,6 +1,6 @@
-# Taskara
+# GhostInk
 
-**Taskara** is a lightweight task management tool designed for backend developers. It allows users to efficiently manage and track tasks in their code, providing detailed information about the context of each task, such as the file, line number, and function where the task was logged. Taskara facilitates debugging and improves workflow clarity by categorizing tasks based on different modes like TODO, DEBUG, INFO, and WARN.
+**GhostInk** is a lightweight task management tool designed for backend developers. It allows users to efficiently manage and track tasks in their code, providing detailed information about the context of each task, such as the file, line number, and function where the task was logged. GhostInk facilitates debugging and improves workflow clarity by categorizing tasks based on different modes like TODO, DEBUG, INFO, and WARN.
 
 ## Features
 
@@ -12,29 +12,29 @@
 
 ## Installation
 
-To use Taskara, clone this repository to your local machine:
+To use GhostInk, clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Taskara.git
-cd Taskara
+git clone https://github.com/YOUR_USERNAME/GhostInk.git
+cd GhostInk
 ```
 
 ## Usage
 
-### Importing Taskara
+### Importing GhostInk
 
-First, import the Taskara class into your project:
+First, import the GhostInk class into your project:
 
 ```python
-from taskara import Taskara
+from ghostink import GhostInk
 ```
 
-### Initializing Taskara
+### Initializing GhostInk
 
-Create an instance of Taskara, specifying the project root if necessary:
+Create an instance of GhostInk, specifying the project root if necessary:
 
 ```python
-task_manager = Taskara(project_root='/path/to/your/project')
+task_manager = GhostInk(project_root='/path/to/your/project')
 ```
 
 ### Adding Tasks
@@ -42,8 +42,8 @@ task_manager = Taskara(project_root='/path/to/your/project')
 You can add tasks with different severity modes:
 
 ```python
-task_manager.add_task("This is a TODO task", mode=Taskara.mode.TODO)
-task_manager.add_task("Debugging the application", mode=Taskara.mode.DEBUG)
+task_manager.add_task("This is a TODO task", mode=GhostInk.mode.TODO)
+task_manager.add_task("Debugging the application", mode=GhostInk.mode.DEBUG)
 ```
 
 ### Logging Context
@@ -59,19 +59,19 @@ task_manager.ln("This is a log message.")
 To view all tasks, optionally filtered by mode or filename:
 
 ```python
-task_manager.print(filter_mode=Taskara.mode.WARN)
+task_manager.print(filter_mode=GhostInk.mode.WARN)
 ```
 
 ### Example
 
-Here’s a simple example of how you might use Taskara in your application:
+Here’s a simple example of how you might use GhostInk in your application:
 
 ```python
-from taskara import Taskara
+from ghostink import GhostInk
 
-task_manager = Taskara()
+task_manager = GhostInk()
 
-task_manager.add_task("Initial setup", mode=Taskara.mode.TODO)
+task_manager.add_task("Initial setup", mode=GhostInk.mode.TODO)
 task_manager.ln("Setting up database connection")
 
 # Simulate an error condition
@@ -79,7 +79,7 @@ try:
     # some code that raises an exception
     raise Exception("Simulated error")
 except Exception:
-    task_manager.add_task("Error occurred", mode=Taskara.mode.ERROR)
+    task_manager.add_task("Error occurred", mode=GhostInk.mode.ERROR)
 
 # Print all tasks
 task_manager.print()
