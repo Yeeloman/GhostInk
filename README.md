@@ -112,7 +112,7 @@ ink.whisper()
 
 ### Example Output
 
-![example output](assets/main_out.png)
+![example output](assets/exalple_output.png)
 
 ---
 

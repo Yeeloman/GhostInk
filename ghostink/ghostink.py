@@ -36,7 +36,7 @@ class GhostInk:
         title: str = "GhostInk",
         project_root: str = ".",
         log_to_file: bool = False,
-        log_file: str = "etchara.log"
+        log_file: str = "etchara.log",
     ):
         self.title = title
         self.etchings = set()
@@ -76,8 +76,7 @@ class GhostInk:
             file_handler.setLevel(log_level)
 
             # Formatter including timestamp, level, and message
-            formatter = logging.Formatter(
-                "%(asctime)s - %(levelname)s - %(message)s")
+            formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
             file_handler.setFormatter(formatter)
 
             # Add the handler to the logger
@@ -163,8 +162,10 @@ class GhostInk:
         - file_mask (str): The filename to filter etchs by (default: None).
         """
         # Display Title
-        print(f"\n{Style.BRIGHT}{Fore.CYAN}{
-              self.title:^23}{Style.RESET_ALL}\n")
+        print(
+            f"\n{Style.BRIGHT}{Fore.CYAN}{
+              self.title:^23}{Style.RESET_ALL}\n"
+        )
 
         # Filter and sort etchs
         filtered_etchings = [
@@ -180,12 +181,12 @@ class GhostInk:
             print(self._format_etch(etch_mode, etch, file, line, func))
             if self.log_to_file:
                 self.logger.debug(
-                    f"[{etch_mode.name}] - {etch} - {file}:{line} in {func}")
+                    f"[{etch_mode.name}] - {etch} - {file}:{line} in {func}"
+                )
 
         # Caller information
         caller_frame = inspect.stack()[1]
-        caller_file = os.path.relpath(
-            caller_frame.filename, start=self.project_root)
+        caller_file = os.path.relpath(caller_frame.filename, start=self.project_root)
         caller_line = caller_frame.lineno
 
         print(
@@ -264,17 +265,21 @@ class GhostInk:
             # Handle other data types or raise a warning
             return str(etch_input)  # Convert any other type to string
 
-    def _format_etch(self, mode, etch, file, line, func) -> str:
+    def _format_etch(self, etch_mode, itch, file, line, func) -> str:
         """
-        Formats a etch for printing.
+        Formats a task for printing.
 
         Parameters:
-        - etch (tuple): The etch tuple to format.
+        - task (tuple): The task tuple to format.
 
         Returns:
         - str: The formatted string.
         """
-        return f"[{self._color_text(mode)}] {etch}\n(Ln:{self._color_text(mode, line)} - {func} in {file})"
+        filename = file.split("/")[-1]
+        path = "/".join(file.split("/")[:-1])
+        colored_filename = self._color_text(etch_mode, filename)
+        colored_mode = self._color_text(etch_mode)
+        return f"[{colored_mode}] {itch}\n(Ln:{self._color_text(etch_mode, line)} - {func} in {path}/{colored_filename})"
 
 
 __all__ = ["GhostInk"]
