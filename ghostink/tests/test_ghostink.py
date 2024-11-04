@@ -17,12 +17,12 @@ def test_initialization(ghostink):
 
 
 def test_inkdrope(ghostink):
-    ghostink.inkdrop("My first etch", GhostInk.mode.DEBUG)
+    ghostink.inkdrop("My first etch", GhostInk.Shade.DEBUG)
     assert len(ghostink.etchings) == 1
 
 
 def test_inkdrop_object(ghostink):
-    ghostink.inkdrop({"etch": "Check this"}, GhostInk.mode.TODO)
+    ghostink.inkdrop({"etch": "Check this"}, GhostInk.Shade.TODO)
     assert len(ghostink.etchings) == 1
 
     etch_text = list(ghostink.etchings)[0][1]
@@ -30,11 +30,11 @@ def test_inkdrop_object(ghostink):
 
 
 def test_whisper_filtered_etchings(ghostink, capsys):
-    ghostink.inkdrop("etch 1", GhostInk.mode.DEBUG)
-    ghostink.inkdrop("etch 2", GhostInk.mode.INFO)
+    ghostink.inkdrop("etch 1", GhostInk.Shade.DEBUG)
+    ghostink.inkdrop("etch 2", GhostInk.Shade.INFO)
 
     # Print only DEBUG etchings
-    ghostink.whisper(mode_mask=GhostInk.mode.DEBUG)
+    ghostink.whisper(shade_mask=GhostInk.Shade.DEBUG)
 
     captured = capsys.readouterr()
     assert "etch 1" in captured.out

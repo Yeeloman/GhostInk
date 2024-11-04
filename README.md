@@ -35,13 +35,13 @@ ink = GhostInk(
 )
 ```
 
-### Adding etchings (tasks) with Modes
+### Adding etchings (tasks) with Shades
 
-Add etchings with `inkdrop`, assigning modes such as `TODO`, `INFO`, `DEBUG`, `WARN`, or `ERROR`. Modes allow you to manage and filter etchings effectively.
+Add etchings with `inkdrop`, assigning Shades such as `TODO`, `INFO`, `DEBUG`, `WARN`, or `ERROR`. Shades allow you to manage and filter etchings effectively.
 
 ```python
-ink.inkdrop("Refactor this method", mode=GhostInk.mode.TODO)
-ink.inkdrop("This is debug info", mode=GhostInk.mode.DEBUG)
+ink.inkdrop("Refactor this method", Shade=GhostInk.Shade.TODO)
+ink.inkdrop("This is debug info", Shade=GhostInk.Shade.DEBUG)
 ```
 
 ### Printing Location Information with `haunt`
@@ -54,10 +54,10 @@ ink.haunt("Executing important operation")
 
 ### Viewing and Filtering etchings with `whisper`
 
-View all tracked etchings using `whisper`, with optional filters by mode or file name:
+View all tracked etchings using `whisper`, with optional filters by Shade or file name:
 
 ```python
-ink.whisper(mode_mask=GhostInk.mode.TODO)
+ink.whisper(shade_mask=GhostInk.Shade.TODO)
 ink.whisper(file_mask="main.py")
 ```
 
@@ -70,23 +70,17 @@ ink.whisper(file_mask="main.py")
    - **Parameters**:
      - `msg`: Optional message displayed before the file information.
 
-2. **`inkdrop(etch_input: any, mode: mode = mode.TODO)`**  
-   - Adds a etch with text and a specific mode to the etch list.
+2. **`inkdrop(etch_input: any, Shade: Shade = Shade.TODO)`**  
+   - Adds a etch with text and a specific Shade to the etch list.
    - **Parameters**:
      - `etch_input`: Text, dictionary, or object to record as a etch.
-     - `mode`: etch mode (TODO, INFO, DEBUG, WARN, ERROR).
+     - `Shade`: etch Shade (TODO, INFO, DEBUG, WARN, ERROR).
 
-3. **`whisper(filter_mode: str = None, filter_filename: str = None)`**  
-   - Prints filtered etchings based on mode and filename.
+3. **`whisper(filter_Shade: str = None, filter_filename: str = None)`**  
+   - Prints filtered etchings based on Shade and filename.
    - **Parameters**:
-     - `filter_mode`: Filter etchings by mode.
-     - `filter_filename`: Filter etchings by specific file name.
-
-4. **`_color_text(mode: mode, text: str = "")`**  
-   - Colors output based on etch mode (internal use).
-
-5. **`_get_relative_path()`**  
-   - Retrieves relative path, line number, and function name for etchings.
+     - `shade_mask`: Filter etchings by Shade.
+     - `file_mask`: Filter etchings by specific file name.
 
 ---
 
@@ -99,9 +93,9 @@ from ghosink import GhostInk
 ink = GhostInk(title="Project Debugger", log_to_file=True)
 
 # Add etchings
-ink.inkdrop("Fix memory leak", mode=GhostInk.mode.TODO)
-ink.inkdrop("Checkpoint reached", mode=GhostInk.mode.INFO)
-ink.inkdrop("Debug, Error, Warn itchs", mode=GhostInk.mode.DEBUG)
+ink.inkdrop("Fix memory leak", Shade=GhostInk.Shade.TODO)
+ink.inkdrop("Checkpoint reached", Shade=GhostInk.Shade.INFO)
+ink.inkdrop("Debug, Error, Warn itchs", Shade=GhostInk.Shade.DEBUG)
 
 # Print a debug statement with file details
 ink.haunt("Debugging current function")
@@ -121,7 +115,7 @@ ink.whisper()
 - No more manually adding and searching for `print` statements!
 - Clearly organized, color-coded outputs make etchings easy to spot and review.
 - Optional file logging to retain records and analyze later.
-- Filters for viewing etchings by file and mode allow better focus and etch management.
+- Filters for viewing etchings by file and Shade allow better focus and etch management.
 
 ---
 
