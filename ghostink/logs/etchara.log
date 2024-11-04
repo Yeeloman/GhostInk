@@ -1,9 +1,0 @@
-2024-11-04 01:31:41,450 - DEBUG - [DEBUG] - Debug, Error, Warn itchs
-Stack Trace:
-[1m[31m[2m  File "/home/yeeloman/Documents/GitHub/GhostInk_project/ghostink/main.py", line 9, in <module>
-    ink.inkdrop("Debug, Error, Warn itchs", mode=GhostInk.mode.DEBUG)
-[0m[1m[31m[2m  File "/home/yeeloman/Documents/GitHub/GhostInk_project/ghostink/ghostink.py", line 145, in inkdrop
-    stack_trace = traceback.format_stack()
-[0m - main.py:9 in <module>
-2024-11-04 01:31:41,450 - DEBUG - [INFO] - Checkpoint reached - main.py:8 in <module>
-2024-11-04 01:31:41,450 - DEBUG - [TODO] - Fix memory leak - main.py:7 in <module>

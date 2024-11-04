@@ -5,3 +5,4 @@ dist/
 build/
 GhostInk.egg-info/
 logs/
+**/logs
