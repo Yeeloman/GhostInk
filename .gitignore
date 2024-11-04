@@ -3,3 +3,5 @@ env/
 dist/
 .py_cache/
 build/
+GhostInk.egg-info/
+logs/
