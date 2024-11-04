@@ -9,6 +9,5 @@ GhoslInk.egg-info/top_level.txt
 ghostink/__init__.py
 ghostink/ghostink.py
 ghostink/main.py
-ghostink/testing.py
 ghostink/tests/__init__.py
 ghostink/tests/test_ghostink.py

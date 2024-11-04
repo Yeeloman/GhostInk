@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: GhoslInk
-Version: 0.0.2
+Version: 0.0.5
 Summary: A task management tool for developers.
 Home-page: https://github.com/Yeeloman/GhostInk
 Author: Yeeloman
@@ -22,7 +22,7 @@ Requires-Dist: colorama
 
 ## Installation
 
-To install `GhostInk`, add it to your project with pip(soon will be available, but for the moment just clone the repo):
+To install `GhostInk`, add it to your project with pip:
 
 ```bash
 pip install ghosink
@@ -128,7 +128,7 @@ ink.whisper()
 
 ### Example Output
 
-![example output](assets/main_out.png)
+![example output](assets/exalple_output.png)
 
 ---
 

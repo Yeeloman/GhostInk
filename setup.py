@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="GhoslInk",
-    version="0.0.2",
+    version="0.0.5",
     packages=find_packages(),
     author="Yeeloman",
     author_email="yami.onlyme@gmail.com",
