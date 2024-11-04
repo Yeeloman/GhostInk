@@ -19,7 +19,7 @@ class GhostInk:
     class mode(Enum):
         """
         Defines an Enum class 'mode' with options:
-        - TODO: Represents a task to be done.
+        - TODO: Represents a etch to be done.
         - DEBUG: Represents debug information.
         - INFO: Represents informational messages.
         - ERROR: Represents warning messages.
@@ -36,10 +36,10 @@ class GhostInk:
         title: str = "GhostInk",
         project_root: str = ".",
         log_to_file: bool = False,
-        log_file: str = "taskara.log"
+        log_file: str = "etchara.log"
     ):
         self.title = title
-        self.tasks = set()
+        self.etchings = set()
         self.project_root = project_root
         self.log_to_file = log_to_file
         self.log_file = log_file
@@ -83,21 +83,7 @@ class GhostInk:
             # Add the handler to the logger
             self.logger.addHandler(file_handler)
 
-    def set_mode(self, new_mode: mode) -> None:
-        """
-        Set the mode of the GhostInk instance to the specified new_mode.
-
-        Parameters:
-        - new_mode (GhostInk.mode): The new mode to set for the GhostInk instance.
-
-        If the new_mode is not an instance of GhostInk.mode, the mode is set to GhostInk.mode.TODO.
-        """
-        if isinstance(new_mode, self.mode):
-            self.mode = new_mode
-        else:
-            self.mode = self.mode.TODO
-
-    def ln(self, msg: str = None) -> None:
+    def haunt(self, msg: str = None) -> None:
         """
         Prints the file name, line number, function name, and timestamp of where this method is called.
 
@@ -134,24 +120,24 @@ class GhostInk:
                     timestamp}"
             )
 
-    def add_task(self, task_input: any, mode: mode = mode.TODO) -> None:
+    def inkdrop(self, etch_input: any, mode: mode = mode.TODO) -> None:
         """
-        Add a task with specified text and mode to the Debugger's
-        task list if it's not already present.
+        Add a etch with specified text and mode to the Debugger's
+        etch list if it's not already present.
 
         Parameters:
-        - task_input (str or dict or object): The text or object to be added as a task.
-        - mode (GhostInk.mode): The mode of the task (default: GhostInk.mode.TODO).
+        - etch_input (str or dict or object): The text or object to be added as a etch.
+        - mode (GhostInk.mode): The mode of the etch (default: GhostInk.mode.TODO).
 
-        If task_input is a dictionary or object, it is formatted using _format_task_from_object method.
+        If etch_input is a dictionary or object, it is formatted using _format_etch_from_object method.
         The relative path, line number, and function name of the caller are obtained using _get_relative_path method.
-        If mode is ERROR or DEBUG, stack trace is added to the task text.
-        The task is added to the task list if it's not already present.
+        If mode is ERROR or DEBUG, stack trace is added to the etch text.
+        The etch is added to the etch list if it's not already present.
         """
-        if isinstance(task_input, str):
-            task_text = task_input
+        if isinstance(etch_input, str):
+            etch_text = etch_input
         else:
-            task_text = self._format_task_from_object(task_input)
+            etch_text = self._format_etch_from_object(etch_input)
 
         relative_path, line_no, func_name = self._get_relative_path()
 
@@ -161,40 +147,40 @@ class GhostInk:
                 f"{Style.BRIGHT}{Fore.RED + Style.DIM}{line}{Style.RESET_ALL}"
                 for line in stack_trace
             )
-            task_text += f"\nStack Trace:\n{colored_stack_trace}"
+            etch_text += f"\nStack Trace:\n{colored_stack_trace}"
 
-        formatted_task = (mode, task_text, relative_path, line_no, func_name)
+        formatted_etch = (mode, etch_text, relative_path, line_no, func_name)
 
-        if formatted_task not in self.tasks:
-            self.tasks.add(formatted_task)
+        if formatted_etch not in self.etchings:
+            self.etchings.add(formatted_etch)
 
-    def print(self, filter_mode: str = None, filter_filename: str = None) -> None:
+    def whisper(self, mode_mask: str = None, file_mask: str = None) -> None:
         """
-        Prints filtered and sorted tasks based on the provided filter_mode and filter_filename.
+        Prints filtered and sorted etchs based on the provided mode_mask and file_mask.
 
         Parameters:
-        - filter_mode (GhostInk.mode): The mode to filter tasks by (default: None).
-        - filter_filename (str): The filename to filter tasks by (default: None).
+        - mode_mask (GhostInk.mode): The mode to filter etchs by (default: None).
+        - file_mask (str): The filename to filter etchs by (default: None).
         """
         # Display Title
         print(f"\n{Style.BRIGHT}{Fore.CYAN}{
               self.title:^23}{Style.RESET_ALL}\n")
 
-        # Filter and sort tasks
-        filtered_tasks = [
-            task
-            for task in self.tasks
-            if (filter_mode is None or task[0] == filter_mode)
-            and (filter_filename is None or task[2] == filter_filename)
+        # Filter and sort etchs
+        filtered_etchings = [
+            etch
+            for etch in self.etchings
+            if (mode_mask is None or etch[0] == mode_mask)
+            and (file_mask is None or etch[2] == file_mask)
         ]
-        sorted_tasks = sorted(filtered_tasks, key=lambda x: x[0].value)
+        sorted_etchings = sorted(filtered_etchings, key=lambda x: x[0].value)
 
-        # Print tasks
-        for task_mode, task, file, line, func in sorted_tasks:
-            print(self._format_task(task_mode, task, file, line, func))
+        # Print etchs
+        for etch_mode, etch, file, line, func in sorted_etchings:
+            print(self._format_etch(etch_mode, etch, file, line, func))
             if self.log_to_file:
                 self.logger.debug(
-                    f"[{task_mode.name}] - {task} - {file}:{line} in {func}")
+                    f"[{etch_mode.name}] - {etch} - {file}:{line} in {func}")
 
         # Caller information
         caller_frame = inspect.stack()[1]
@@ -207,7 +193,7 @@ class GhostInk:
                 Style.RESET_ALL} at line {Fore.YELLOW}{caller_line}{Style.RESET_ALL}"
         )
         print(
-            f"{Fore.RED + Style.BRIGHT}Review completed tasks and remove them as necessary.{Style.RESET_ALL}\n"
+            f"{Fore.RED + Style.BRIGHT}Review completed etchs and remove them as necessary.{Style.RESET_ALL}\n"
         )
 
     def _color_text(self, mode: mode, text: str = "") -> None:
@@ -247,48 +233,48 @@ class GhostInk:
         relative_path = os.path.relpath(full_path, start=self.project_root)
         return relative_path, caller_frame.lineno, caller_frame.function
 
-    def _format_task_from_object(self, task_input: any) -> str:
+    def _format_etch_from_object(self, etch_input: any) -> str:
         """
         Convert a dictionary or object to a string
-        representation suitable for a task.
+        representation suitable for a etch.
 
         Parameters:
-        - task_input (dict or object): The input to format.
+        - etch_input (dict or object): The input to format.
 
         Returns:
-        - str: A formatted string representing the task.
+        - str: A formatted string representing the etch.
         """
-        if isinstance(task_input, dict):
+        if isinstance(etch_input, dict):
             # Pretty-print dictionaries
-            return json.dumps(task_input, indent=4)
-        elif isinstance(task_input, (list, tuple)):
+            return json.dumps(etch_input, indent=4)
+        elif isinstance(etch_input, (list, tuple)):
             # Join list/tuple elements
-            return ", ".join(str(item) for item in task_input)
-        elif isinstance(task_input, set):
+            return ", ".join(str(item) for item in etch_input)
+        elif isinstance(etch_input, set):
             # Display sets
-            return "{" + ", ".join(str(item) for item in task_input) + "}"
-        elif isinstance(task_input, str):
-            return task_input  # Directly return strings
-        elif hasattr(task_input, "__dict__"):
+            return "{" + ", ".join(str(item) for item in etch_input) + "}"
+        elif isinstance(etch_input, str):
+            return etch_input  # Directly return strings
+        elif hasattr(etch_input, "__dict__"):
             # Format custom objects using their attributes
             return ", ".join(
-                f"{key}: {value}" for key, value in vars(task_input).items()
+                f"{key}: {value}" for key, value in vars(etch_input).items()
             )
         else:
             # Handle other data types or raise a warning
-            return str(task_input)  # Convert any other type to string
+            return str(etch_input)  # Convert any other type to string
 
-    def _format_task(self, mode, task, file, line, func) -> str:
+    def _format_etch(self, mode, etch, file, line, func) -> str:
         """
-        Formats a task for printing.
+        Formats a etch for printing.
 
         Parameters:
-        - task (tuple): The task tuple to format.
+        - etch (tuple): The etch tuple to format.
 
         Returns:
         - str: The formatted string.
         """
-        return f"[{self._color_text(mode)}] {task}\n(Ln:{self._color_text(mode, line)} - {func} in {file})"
+        return f"[{self._color_text(mode)}] {etch}\n(Ln:{self._color_text(mode, line)} - {func} in {file})"
 
 
 __all__ = ["GhostInk"]
