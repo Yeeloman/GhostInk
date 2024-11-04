@@ -1,6 +1,6 @@
 import pytest
 import json
-from GhoslInk.ghostink import GhostInk
+from ghostink.ghostink import GhostInk
 
 # Initialize a GhostInk instance for tests
 
@@ -33,7 +33,8 @@ def test_whisper_filtered_etchings(ghostink, capsys):
     ghostink.inkdrop("etch 1", GhostInk.mode.DEBUG)
     ghostink.inkdrop("etch 2", GhostInk.mode.INFO)
 
-    ghostink.whisper(mode_mask=GhostInk.mode.DEBUG)  # Print only DEBUG etchings
+    # Print only DEBUG etchings
+    ghostink.whisper(mode_mask=GhostInk.mode.DEBUG)
 
     captured = capsys.readouterr()
     assert "etch 1" in captured.out

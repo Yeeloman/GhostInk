@@ -1,3 +1,19 @@
+Metadata-Version: 2.1
+Name: GhoslInk
+Version: 0.0.2
+Summary: A task management tool for developers.
+Home-page: https://github.com/Yeeloman/GhostInk
+Author: Yeeloman
+Author-email: yami.onlyme@gmail.com
+Keywords: task management,debugging,development tools,logging,task tracker,Python,console output,debugging tools,task organizer,development,productivity,software development
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: colorama
+
 # GhostInk
 
 **GhostInk** is a Python utility to streamline debugging and etch(task) tracking by printing detailed file information for each call. This tool eliminates the need to manually add `print` statements and hunt for line numbers or file names, providing an organized, colorful output to track etchings, debug info, and errors across your project.
@@ -6,7 +22,7 @@
 
 ## Installation
 
-To install `GhostInk`, add it to your project with pip:
+To install `GhostInk`, add it to your project with pip(soon will be available, but for the moment just clone the repo):
 
 ```bash
 pip install ghosink

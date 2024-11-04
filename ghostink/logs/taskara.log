@@ -1,8 +1,0 @@
-2024-11-02 21:35:51,279 - DEBUG - [TODO] - first task - taskara.py:156 in add_task
-2024-11-02 21:36:34,155 - DEBUG - [TODO] - first task - taskara.py:156 in add_task
-2024-11-02 21:36:45,632 - DEBUG - [TODO] - first task - taskara.py:156 in add_task
-2024-11-02 21:42:37,249 - DEBUG - [TODO] - first task - taskara.py:245 in _get_relative_path
-2024-11-02 21:42:46,097 - DEBUG - [TODO] - first task - taskara.py:156 in add_task
-2024-11-02 21:42:53,663 - DEBUG - [TODO] - first task - testing.py:6 in <module>
-2024-11-02 21:43:09,694 - DEBUG - [TODO] - first task - testing.py:6 in <module>
-2024-11-02 21:44:44,558 - DEBUG - [TODO] - first task - testing.py:6 in <module>

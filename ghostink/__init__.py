@@ -1,2 +1,2 @@
-# taskara/__init__.py
-from GhoslInk.ghostink import GhostInk
+# ghostink/__init__.py
+from .ghostink import GhostInk
