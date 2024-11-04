@@ -36,7 +36,7 @@ class GhostInk:
         title: str = "GhostInk",
         project_root: str = ".",
         log_to_file: bool = False,
-        log_file: str = "etchara.log",
+        log_file: str = "ghostink.log",
     ):
         self.title = title
         self.etchings = set()
@@ -120,7 +120,7 @@ class GhostInk:
                     timestamp}"
             )
 
-    def inkdrop(self, etch_input: any, Shade: Shade = Shade.TODO) -> None:
+    def inkdrop(self, etch_input: any, shade: Shade = Shade.TODO) -> None:
         """
         Add a etch with specified text and Shade to the Debugger's
         etch list if it's not already present.
@@ -141,7 +141,7 @@ class GhostInk:
 
         relative_path, line_no, func_name = self._get_relative_path()
 
-        if Shade in [self.Shade.ERROR, self.Shade.DEBUG, self.Shade.WARN]:
+        if shade in [self.Shade.ERROR, self.Shade.DEBUG, self.Shade.WARN]:
             stack_trace = traceback.format_stack()
             colored_stack_trace = "".join(
                 f"{Style.BRIGHT}{Fore.RED + Style.DIM}{line}{Style.RESET_ALL}"
@@ -149,7 +149,7 @@ class GhostInk:
             )
             etch_text += f"\nStack Trace:\n{colored_stack_trace}"
 
-        formatted_etch = (Shade, etch_text, relative_path, line_no, func_name)
+        formatted_etch = (shade, etch_text, relative_path, line_no, func_name)
 
         if formatted_etch not in self.etchings:
             self.etchings.add(formatted_etch)
@@ -178,11 +178,11 @@ class GhostInk:
         sorted_etchings = sorted(filtered_etchings, key=lambda x: x[0].value)
 
         # Print etchs
-        for etch_Shade, etch, file, line, func in sorted_etchings:
-            print(self._format_etch(etch_Shade, etch, file, line, func))
+        for etch_shade, etch, file, line, func in sorted_etchings:
+            print(self._format_etch(etch_shade, etch, file, line, func))
             if self.log_to_file:
                 self.logger.debug(
-                    f"[{etch_Shade.name}] - {etch} - {file}:{line} in {func}"
+                    f"[{etch_shade.name}] - {etch} - {file}:{line} in {func}"
                 )
 
         # Caller information
@@ -199,7 +199,7 @@ class GhostInk:
             f"{Fore.RED + Style.BRIGHT}Review completed etchs and remove them as necessary.{Style.RESET_ALL}\n"
         )
 
-    def _color_text(self, Shade: Shade, text: str = "") -> None:
+    def _color_text(self, shade: Shade, text: str = "") -> None:
         """
         Color the text based on the debug Shade using colorama.
 
@@ -219,10 +219,10 @@ class GhostInk:
         }
 
         # Choose the color for the Shade
-        color = colors.get(Shade, Style.RESET_ALL)
+        color = colors.get(shade, Style.RESET_ALL)
 
         if text == "":
-            return f"{color}{Shade.name}{Style.RESET_ALL}"
+            return f"{color}{shade.name}{Style.RESET_ALL}"
         else:
             return f"{color}{text}{Style.RESET_ALL}"
 
