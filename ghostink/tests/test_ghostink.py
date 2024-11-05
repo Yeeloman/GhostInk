@@ -1,7 +1,8 @@
 import pytest
 import json
-from ghostink.ghostink import GhostInk
+from ghostink import ghostall
 
+ghostall()
 # Initialize a GhostInk instance for tests
 
 

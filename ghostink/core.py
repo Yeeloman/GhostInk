@@ -171,7 +171,7 @@ class GhostInk:
         # Display Title
         print(
             f"\n{Style.BRIGHT}{Fore.CYAN}{
-                self.title}{Style.RESET_ALL}\n"
+                self.title}{Style.RESET_ALL}"
         )
         formatted_echoes = self._format_echos(echo_mask)
         filtered_etchings = self.etchings.copy()  # Start with all etchings
@@ -206,7 +206,8 @@ class GhostInk:
 
         # Print etchs
         for etch_shade, etch, file, line, func, echoes in sorted_etchings:
-            print(self._format_etch(etch_shade, etch, file, line, func, echoes))
+            print("\n" + self._format_etch(etch_shade,
+                  etch, file, line, func, echoes))
             if self.log_to_file:
                 self.logger.debug(
                     f"[{etch_shade.name}] - {etch} - {file}:{line} in {func}"

@@ -131,6 +131,10 @@ just another line
 
 ---
 
+## An import trick
+to make `GhostInk` available in all file projects without the import statements, you can use `ghostall()`.
+---
+
 ## Benefits
 
 - No more manually adding and searching for `print` statements!

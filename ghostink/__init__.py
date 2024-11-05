@@ -1,2 +1,3 @@
 # ghostink/__init__.py
-from .ghostink import GhostInk
+from .core import GhostInk
+from .builtins import ghostall, unghostall
