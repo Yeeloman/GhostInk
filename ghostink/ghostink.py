@@ -1,4 +1,5 @@
 import os
+import random
 import traceback
 import json
 import inspect
@@ -234,13 +235,31 @@ class GhostInk:
         Returns:
         - str: Colored text.
         """
+        background_colors = [
+            Back.BLACK,
+            Back.RED,
+            Back.GREEN,
+            Back.YELLOW,
+            Back.BLUE,
+            Back.MAGENTA,
+            Back.CYAN,
+            Back.WHITE,
+            Back.LIGHTBLACK_EX,
+            Back.LIGHTRED_EX,
+            Back.LIGHTGREEN_EX,
+            Back.LIGHTYELLOW_EX,
+            Back.LIGHTBLUE_EX,
+            Back.LIGHTMAGENTA_EX,
+            Back.LIGHTCYAN_EX,
+            Back.LIGHTWHITE_EX
+        ]
         colors = {
             self.Shade.TODO: Fore.YELLOW,
             self.Shade.DEBUG: Fore.BLUE,
             self.Shade.INFO: Fore.MAGENTA,
             self.Shade.WARN: Fore.RED,
             self.Shade.ERROR: Fore.RED + Style.BRIGHT,
-            self.Shade._ECHO: Back.CYAN + Style.BRIGHT,
+            self.Shade._ECHO: random.choice(background_colors) + Style.BRIGHT,
         }
 
         # Choose the color for the Shade
