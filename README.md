@@ -41,7 +41,8 @@ Add etchings with `inkdrop`, assigning Shades such as `TODO`, `INFO`, `DEBUG`, `
 
 ```python
 ink.inkdrop("Refactor this method", Shade=GhostInk.Shade.TODO)
-ink.inkdrop("This is debug info", Shade=GhostInk.Shade.DEBUG)
+# inkdrop can be aliased to just drop
+ink.drop("This is debug info", Shade=GhostInk.Shade.DEBUG, echoes=["database"])
 ```
 
 ### Printing Location Information with `haunt`
@@ -49,6 +50,7 @@ ink.inkdrop("This is debug info", Shade=GhostInk.Shade.DEBUG)
 If you simply want to print the current file location (file, line, function, and timestamp) without adding a etch, use `haunt`:
 
 ```python
+# can be aliased to ink.ln()
 ink.haunt("Executing important operation")
 ```
 
@@ -59,6 +61,7 @@ View all tracked etchings using `whisper`, with optional filters by Shade or fil
 ```python
 ink.whisper(shade_mask=GhostInk.Shade.TODO)
 ink.whisper(file_mask="main.py")
+ink.whisper(echo_mask=["database"])
 ```
 
 ---
@@ -70,43 +73,60 @@ ink.whisper(file_mask="main.py")
    - **Parameters**:
      - `msg`: Optional message displayed before the file information.
 
-2. **`inkdrop(etch_input: any, Shade: Shade = Shade.TODO)`**  
+2. **`inkdrop(etch_input: any, Shade: Shade = Shade.TODO, echoes: List[str] = [])`**  
    - Adds a etch with text and a specific Shade to the etch list.
    - **Parameters**:
      - `etch_input`: Text, dictionary, or object to record as a etch.
      - `Shade`: etch Shade (TODO, INFO, DEBUG, WARN, ERROR).
+     - `echoes`: Tags for the task
 
-3. **`whisper(filter_Shade: str = None, filter_filename: str = None)`**  
+3. **`whisper(shade_mask: str = None, file_mask: str = None, echo_mask: List[str] = None)`**  
    - Prints filtered etchings based on Shade and filename.
    - **Parameters**:
      - `shade_mask`: Filter etchings by Shade.
      - `file_mask`: Filter etchings by specific file name.
+     - `echo_mask`: Filter etchings by specific echo (Tag)
 
 ---
 
 ## Example
 
 ```python
-from ghosink import GhostInk
+from ghostink import GhostInk
 
-# Initialize with logging enabled
-ink = GhostInk(title="Project Debugger", log_to_file=True)
+ink = GhostInk(title="Project Debugger")
+ink.drop("Fix memory leak", shade=GhostInk.Shade.WARN,
+         echoes=['leaks', 'memory'])
+ink.drop("Checkpoint reached", shade=GhostInk.Shade.INFO)
+ink.drop("this is an importatnt TODO note DO NOT IGNORE")
 
-# Add etchings
-ink.inkdrop("Fix memory leak", Shade=GhostInk.Shade.TODO)
-ink.inkdrop("Checkpoint reached", Shade=GhostInk.Shade.INFO)
-ink.inkdrop("Debug, Error, Warn itchs", Shade=GhostInk.Shade.DEBUG)
 
-# Print a debug statement with file details
-ink.haunt("Debugging current function")
+ink.whisper(echo_mask=['memory'])
 
-# View all etchings
-ink.whisper()
+ink.haunt('just another line')
+
 ```
 
 ### Example Output
 
-![example output](assets/example_output.png)
+```bash
+   Project Debugger
+
+[WARN] Fix memory leak
+Stack Trace:
+  File "/home/yeeloman/Documents/GitHub/GhostInk_project/ghostink/main.py", line 4, in <module>
+    ink.drop("Fix memory leak", shade=GhostInk.Shade.WARN,
+  File "/home/yeeloman/Documents/GitHub/GhostInk_project/ghostink/ghostink.py", line 137, in inkdrop
+    stack_trace = traceback.format_stack()
+
+ #leaks   #memory
+(Ln:4 - <module> in ghostink/main.py)
+
+Printed from: ghostink/main.py at line 13
+Review completed etchs and remove them as necessary.
+
+just another line
+└── main.py:15 in <module>() at 03:50:40``
 
 ---
 

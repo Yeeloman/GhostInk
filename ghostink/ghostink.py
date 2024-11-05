@@ -154,7 +154,12 @@ class GhostInk:
         if formatted_etch not in self.etchings:
             self.etchings.add(formatted_etch)
 
-    def whisper(self, shade_mask: str = None, file_mask: str = None, echo_mask: Optional[List[str]] = None) -> None:
+    def whisper(
+        self,
+        shade_mask: str = None,
+        file_mask: str = None,
+        echo_mask: Optional[List[str]] = None,
+    ) -> None:
         """
         Prints filtered and sorted etchs based on the provided shade_mask and file_mask.
 
@@ -168,22 +173,32 @@ class GhostInk:
                 self.title:^23}{Style.RESET_ALL}\n"
         )
         formatted_echoes = self._format_echos(echo_mask)
-        # Filter and sort etchs
-        # filtered_etchings = [
-        #     etch
-        #     for etch in self.etchings
-        #     if (shade_mask is None or etch[0] == shade_mask)
-        #     and (file_mask is None or etch[2] == file_mask)
-        #     and (formatted_echoes is None or any(echo in etch[5] for echo in formatted_echoes))
-        # ]
-        filtered_etchings = []
-        for etch in self.etchings:
-            shade_matches = (shade_mask is None or etch[0] == shade_mask)
-            file_matches = (file_mask is None or etch[2] == file_mask)
-            echo_matches = (formatted_echoes is None or not formatted_echoes or any(echo in etch[5] for echo in formatted_echoes))
+        filtered_etchings = self.etchings.copy()  # Start with all etchings
 
-            if shade_matches and file_matches and echo_matches:
-                filtered_etchings.append(etch)
+        # If no masks are provided, print all etchings
+        if shade_mask is None and file_mask is None and echo_mask is None:
+            filtered_etchings = sorted(filtered_etchings, key=lambda x: x[0].value)
+        else:
+            # Apply filtering
+            if shade_mask:
+                filtered_etchings = {
+                    etch for etch in filtered_etchings if etch[0] == shade_mask
+                }
+
+            # Filter by file
+            if file_mask:
+                filtered_etchings = {
+                    etch for etch in filtered_etchings if etch[2] == file_mask
+                }
+
+            # Filter by echoes
+            if echo_mask:
+                formatted_echoes = self._format_echos(echo_mask)
+                filtered_etchings = {
+                    etch
+                    for etch in filtered_etchings
+                    if any(echo in etch[5] for echo in formatted_echoes)
+                }
 
         sorted_etchings = sorted(filtered_etchings, key=lambda x: x[0].value)
 
