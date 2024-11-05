@@ -171,14 +171,15 @@ class GhostInk:
         # Display Title
         print(
             f"\n{Style.BRIGHT}{Fore.CYAN}{
-                self.title:^23}{Style.RESET_ALL}\n"
+                self.title}{Style.RESET_ALL}\n"
         )
         formatted_echoes = self._format_echos(echo_mask)
         filtered_etchings = self.etchings.copy()  # Start with all etchings
 
         # If no masks are provided, print all etchings
         if shade_mask is None and file_mask is None and echo_mask is None:
-            filtered_etchings = sorted(filtered_etchings, key=lambda x: x[0].value)
+            filtered_etchings = sorted(
+                filtered_etchings, key=lambda x: x[0].value)
         else:
             # Apply filtering
             if shade_mask:
@@ -213,7 +214,8 @@ class GhostInk:
 
         # Caller information
         caller_frame = inspect.stack()[1]
-        caller_file = os.path.relpath(caller_frame.filename, start=self.project_root)
+        caller_file = os.path.relpath(
+            caller_frame.filename, start=self.project_root)
         caller_line = caller_frame.lineno
 
         print(
@@ -384,7 +386,8 @@ class GhostInk:
             file_handler.setLevel(log_level)
 
             # Formatter including timestamp, level, and message
-            formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+            formatter = logging.Formatter(
+                "%(asctime)s - %(levelname)s - %(message)s")
             file_handler.setFormatter(formatter)
 
             # Add the handler to the logger
