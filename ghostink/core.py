@@ -303,7 +303,8 @@ class GhostInk:
         elif hasattr(etch_input, "__dict__"):
             return json.dumps(etch_input.__dict__, indent=4)
         else:
-            return str(etch_input)
+            etch_str = str(etch_input)
+            return f'{etch_str}'
 
     def _format_echoes(self, echoes: List[str] = []):
 
