@@ -1,6 +1,6 @@
 # GhostInk
 
-**GhostInk** is a Python utility to streamline debugging and etch(task) tracking by printing detailed file information for each call. This tool eliminates the need to manually add `print` statements and hunt for line numbers or file names, providing an organized, colorful output to track etchings, debug info, and errors across your project.
+**GhostInk** is a Python utility to streamline debugging and etch(task) tracking by printing detailed file information for each call. This tool eliminates the need to manually add `print` statements and hunt for line numbers or file names, providing an organized, colorful output to track etches, debug info, and errors across your project.
 
 ---
 
@@ -35,9 +35,9 @@ ink = GhostInk(
 )
 ```
 
-### Adding etchings (tasks) with Shades
+### Adding etches (tasks) with Shades
 
-Add etchings with `inkdrop`, assigning Shades such as `TODO`, `INFO`, `DEBUG`, `WARN`, or `ERROR`. Shades allow you to manage and filter etchings effectively.
+Add etches with `inkdrop`, assigning Shades such as `TODO`, `INFO`, `DEBUG`, `WARN`, or `ERROR`. Shades allow you to manage and filter etches effectively.
 
 ```python
 ink.inkdrop("Refactor this method", Shade=GhostInk.Shade.TODO)
@@ -54,9 +54,9 @@ If you simply want to print the current file location (file, line, function, and
 ink.haunt("Executing important operation")
 ```
 
-### Viewing and Filtering etchings with `whisper`
+### Viewing and Filtering etches with `whisper`
 
-View all tracked etchings using `whisper`, with optional filters by Shade or file name:
+View all tracked etches using `whisper`, with optional filters by Shade or file name:
 
 ```python
 ink.whisper(shade_mask=GhostInk.Shade.TODO)
@@ -81,11 +81,11 @@ ink.whisper(echo_mask=["database"])
      - `echoes`: Tags for the task
 
 3. **`whisper(shade_mask: str = None, file_mask: str = None, echo_mask: List[str] = None)`**  
-   - Prints filtered etchings based on Shade and filename.
+   - Prints filtered etches based on Shade and filename.
    - **Parameters**:
-     - `shade_mask`: Filter etchings by Shade.
-     - `file_mask`: Filter etchings by specific file name.
-     - `echo_mask`: Filter etchings by specific echo (Tag)
+     - `shade_mask`: Filter etches by Shade.
+     - `file_mask`: Filter etches by specific file name.
+     - `echo_mask`: Filter etches by specific echo (Tag)
 
 ---
 
@@ -153,13 +153,13 @@ def buster():
 ## Benefits
 
 - No more manually adding and searching for `print` statements!
-- Clearly organized, color-coded outputs make etchings easy to spot and review.
+- Clearly organized, color-coded outputs make etches easy to spot and review.
 - Optional file logging to retain records and analyze later.
-- Filters for viewing etchings by file and Shade allow better focus and etch management.
+- Filters for viewing etches by file and Shade allow better focus and etch management.
 
 ---
 
-**Start using GhostInk** and turn your debug prints into an organized, colorful log. Perfect for developers who want a better way to keep track of etchings and debug information without losing context!
+**Start using GhostInk** and turn your debug prints into an organized, colorful log. Perfect for developers who want a better way to keep track of etches and debug information without losing context!
 
 ---
 

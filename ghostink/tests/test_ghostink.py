@@ -14,32 +14,32 @@ def ghostink():
 def test_initialization(ghostink):
     assert ghostink.title == "GhostInk"
     assert ghostink.project_root == "."
-    assert ghostink.etchings == set()
+    assert ghostink.etches == set()
 
 
 def test_inkdrope(ghostink):
     ghostink.inkdrop("My first etch", GhostInk.shade.DEBUG)
-    assert len(ghostink.etchings) == 1
+    assert len(ghostink.etches) == 1
 
 
 def test_inkdrop_object(ghostink):
     ghostink.inkdrop({"etch": "Check this"}, GhostInk.shade.TODO)
-    assert len(ghostink.etchings) == 1
+    assert len(ghostink.etches) == 1
 
-    etch_text = list(ghostink.etchings)[0][1]
+    etch_text = list(ghostink.etches)[0][1]
     assert etch_text == json.dumps({"etch": "Check this"}, indent=4)
 
 
-def test_whisper_filtered_etchings(ghostink, capsys):
+def test_whisper_filtered_etches(ghostink, capsys):
     ghostink.inkdrop("etch 1", GhostInk.shade.DEBUG)
     ghostink.inkdrop("etch 2", GhostInk.shade.INFO)
 
-    # Print only DEBUG etchings
+    # Print only DEBUG etches
     ghostink.whisper(shade_mask=GhostInk.shade.DEBUG)
 
     captured = capsys.readouterr()
     assert "etch 1" in captured.out
-    assert "etch 2" not in captured.out  # Ensure other etchings are not printed
+    assert "etch 2" not in captured.out  # Ensure other etches are not printed
 
 
 def test_format_etch_from_object_dict(ghostink):

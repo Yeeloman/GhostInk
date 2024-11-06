@@ -53,7 +53,7 @@ class GhostInk:
         Sets up a logger if logging to a file is enabled.
         """
         self.title = title
-        self.etchings = set()
+        self.etches = set()
         self.project_root = project_root
         self.log_to_file = log_to_file
         self.log_file = log_file
@@ -152,8 +152,8 @@ class GhostInk:
             formatted_echoes,
         )
 
-        if formatted_etch not in self.etchings:
-            self.etchings.add(formatted_etch)
+        if formatted_etch not in self.etches:
+            self.etches.add(formatted_etch)
 
     def whisper(
         self,
@@ -174,38 +174,38 @@ class GhostInk:
                 self.title}{Style.RESET_ALL}"
         )
         formatted_echoes = self._format_echoes(echo_mask)
-        filtered_etchings = self.etchings.copy()  # Start with all etchings
+        filtered_etches = self.etches.copy()  # Start with all etches
 
-        # If no masks are provided, print all etchings
+        # If no masks are provided, print all etches
         if shade_mask is None and file_mask is None and echo_mask is None:
-            filtered_etchings = sorted(
-                filtered_etchings, key=lambda x: x[0].value)
+            filtered_etches = sorted(
+                filtered_etches, key=lambda x: x[0].value)
         else:
             # Apply filtering
             if shade_mask:
-                filtered_etchings = {
-                    etch for etch in filtered_etchings if etch[0] == shade_mask
+                filtered_etches = {
+                    etch for etch in filtered_etches if etch[0] == shade_mask
                 }
 
             # Filter by file
             if file_mask:
-                filtered_etchings = {
-                    etch for etch in filtered_etchings if etch[2] == file_mask
+                filtered_etches = {
+                    etch for etch in filtered_etches if etch[2] == file_mask
                 }
 
             # Filter by echoes
             if echo_mask:
                 formatted_echoes = self._format_echoes(echo_mask)
-                filtered_etchings = {
+                filtered_etches = {
                     etch
-                    for etch in filtered_etchings
+                    for etch in filtered_etches
                     if any(echo in etch[5] for echo in formatted_echoes)
                 }
 
-        sorted_etchings = sorted(filtered_etchings, key=lambda x: x[0].value)
+        sorted_etches = sorted(filtered_etches, key=lambda x: x[0].value)
 
         # Print etchs
-        for etch_shade, etch, file, line, func, echoes in sorted_etchings:
+        for etch_shade, etch, file, line, func, echoes in sorted_etches:
             print("\n" + self._format_etch(etch_shade,
                   etch, file, line, func, echoes))
             if self.log_to_file:
