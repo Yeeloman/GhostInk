@@ -18,12 +18,12 @@ def test_initialization(ghostink):
 
 
 def test_inkdrope(ghostink):
-    ghostink.inkdrop("My first etch", GhostInk.Shade.DEBUG)
+    ghostink.inkdrop("My first etch", GhostInk.shade.DEBUG)
     assert len(ghostink.etchings) == 1
 
 
 def test_inkdrop_object(ghostink):
-    ghostink.inkdrop({"etch": "Check this"}, GhostInk.Shade.TODO)
+    ghostink.inkdrop({"etch": "Check this"}, GhostInk.shade.TODO)
     assert len(ghostink.etchings) == 1
 
     etch_text = list(ghostink.etchings)[0][1]
@@ -31,11 +31,11 @@ def test_inkdrop_object(ghostink):
 
 
 def test_whisper_filtered_etchings(ghostink, capsys):
-    ghostink.inkdrop("etch 1", GhostInk.Shade.DEBUG)
-    ghostink.inkdrop("etch 2", GhostInk.Shade.INFO)
+    ghostink.inkdrop("etch 1", GhostInk.shade.DEBUG)
+    ghostink.inkdrop("etch 2", GhostInk.shade.INFO)
 
     # Print only DEBUG etchings
-    ghostink.whisper(shade_mask=GhostInk.Shade.DEBUG)
+    ghostink.whisper(shade_mask=GhostInk.shade.DEBUG)
 
     captured = capsys.readouterr()
     assert "etch 1" in captured.out
@@ -49,13 +49,13 @@ def test_format_etch_from_object_dict(ghostink):
 
 def test_format_etch_from_object_list(ghostink):
     formatted = ghostink._format_etch_from_object(["item1", "item2"])
-    assert formatted == "item1, item2"
+    assert formatted == json.dumps(["item1", "item2"], indent=4)
 
 
 def test_format_etch_from_object_set(ghostink):
     formatted = ghostink._format_etch_from_object({"item1", "item2"})
     # Sets are unordered
-    assert formatted == "{item1, item2}" or formatted == "{item2, item1}"
+    assert formatted == json.dumps(list({"item1", "item2"}), indent=4)
 
 
 def test_format_etch_from_object_other(ghostink):

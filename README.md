@@ -130,9 +130,24 @@ just another line
 ```
 
 ---
-
 ## An import trick
-to make `GhostInk` available in all file projects without the import statements, you can use `ghostall()`.
+
+ - to make `GhostInk` available in all file projects without the import statements, you can use `ghostall()`.
+```python
+# in a parentfile
+from ghostink import ghostall
+from subfile import buster
+ghostall()
+
+buster()
+```
+```python
+# in a subfile
+def buster():
+  ink = GhostInk()
+  ink.drop('now it work like a builtin function')
+  ink.whisper()
+``` 
 ---
 
 ## Benefits

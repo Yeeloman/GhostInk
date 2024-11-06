@@ -18,9 +18,9 @@ class GhostInk:
     Prints file name, line number, function name, and timestamp of the method call.
     """
 
-    class Shade(Enum):
+    class shade(Enum):
         """
-        Defines an Enum class 'Shade' with options:
+        Defines an Enum class 'shade' with options:
         - TODO: Represents a etch to be done.
         - DEBUG: Represents debug information.
         - INFO: Represents informational messages.
@@ -106,25 +106,25 @@ class GhostInk:
     def inkdrop(
         self,
         etch_input: any,
-        shade: Shade = Shade.TODO,
+        shade: shade = shade.TODO,
         echoes: Optional[List[str]] = None,
     ) -> None:
         """
-        Add a etch with specified text and Shade to the Debugger's
+        Add a etch with specified text and shade to the Debugger's
         etch list if it's not already present.
 
         Parameters:
         - etch_input (str or dict or object): The text or object to be added as a etch.
-        - Shade (GhostInk.Shade): The Shade of the etch (default: GhostInk.Shade.TODO).
+        - shade (GhostInk.shade): The shade of the etch (default: GhostInk.shade.TODO).
         - Echoes: (List of str): Tags added to the etch (task) for customized filtering
         If etch_input is a dictionary or object, it is formatted using _format_etch_from_object method.
         The relative path, line number, and function name of the caller are obtained using _get_relative_path method.
-        If Shade is ERROR or DEBUG, stack trace is added to the etch text.
+        If shade is ERROR or DEBUG, stack trace is added to the etch text.
         The etch is added to the etch list if it's not already present.
         """
-        if shade == self.Shade._ECHO:
+        if shade == self.shade._ECHO:
             raise ValueError(
-                "Attempted to use Shade '_ECHO', which is not allowed for etch addition."
+                "Attempted to use shade '_ECHO', which is not allowed for etch addition."
             )
 
         if isinstance(etch_input, str):
@@ -134,7 +134,7 @@ class GhostInk:
 
         relative_path, line_no, func_name = self._get_relative_path()
 
-        if shade in [self.Shade.ERROR, self.Shade.DEBUG, self.Shade.WARN]:
+        if shade in [self.shade.ERROR, self.shade.DEBUG, self.shade.WARN]:
             stack_trace = traceback.format_stack()
             colored_stack_trace = "".join(
                 f"{Style.BRIGHT}{Fore.RED + Style.DIM}{line}{Style.RESET_ALL}"
@@ -142,7 +142,7 @@ class GhostInk:
             )
             etch_text += f"\nStack Trace:\n{colored_stack_trace}"
 
-        formatted_echoes = self._format_echos(echoes)
+        formatted_echoes = self._format_echoes(echoes)
         formatted_etch = (
             shade,
             etch_text,
@@ -165,7 +165,7 @@ class GhostInk:
         Prints filtered and sorted etchs based on the provided shade_mask and file_mask.
 
         Parameters:
-        - shade_mask (GhostInk.Shade): The Shade to filter etchs by (default: None).
+        - shade_mask (GhostInk.shade): The shade to filter etchs by (default: None).
         - file_mask (str): The filename to filter etchs by (default: None).
         """
         # Display Title
@@ -173,7 +173,7 @@ class GhostInk:
             f"\n{Style.BRIGHT}{Fore.CYAN}{
                 self.title}{Style.RESET_ALL}"
         )
-        formatted_echoes = self._format_echos(echo_mask)
+        formatted_echoes = self._format_echoes(echo_mask)
         filtered_etchings = self.etchings.copy()  # Start with all etchings
 
         # If no masks are provided, print all etchings
@@ -195,7 +195,7 @@ class GhostInk:
 
             # Filter by echoes
             if echo_mask:
-                formatted_echoes = self._format_echos(echo_mask)
+                formatted_echoes = self._format_echoes(echo_mask)
                 filtered_etchings = {
                     etch
                     for etch in filtered_etchings
@@ -227,13 +227,13 @@ class GhostInk:
             f"{Fore.RED + Style.BRIGHT}Review completed etchs and remove them as necessary.{Style.RESET_ALL}\n"
         )
 
-    def _color_text(self, shade: Shade, text: str = "") -> None:
+    def _color_text(self, shade: shade, text: str = "") -> None:
         """
-        Color the text based on the debug Shade using colorama.
+        Color the text based on the debug shade using colorama.
 
         Parameters:
         - text (str): The text to color.
-        - Shade (self.Shade): The Shade that determines the color.
+        - shade (self.shade): The shade that determines the color.
 
         Returns:
         - str: Colored text.
@@ -257,15 +257,15 @@ class GhostInk:
             Back.LIGHTWHITE_EX
         ]
         colors = {
-            self.Shade.TODO: Fore.YELLOW,
-            self.Shade.DEBUG: Fore.BLUE,
-            self.Shade.INFO: Fore.MAGENTA,
-            self.Shade.WARN: Fore.RED,
-            self.Shade.ERROR: Fore.RED + Style.BRIGHT,
-            self.Shade._ECHO: random.choice(background_colors) + Style.BRIGHT,
+            self.shade.TODO: Fore.YELLOW,
+            self.shade.DEBUG: Fore.BLUE,
+            self.shade.INFO: Fore.MAGENTA,
+            self.shade.WARN: Fore.RED,
+            self.shade.ERROR: Fore.RED + Style.BRIGHT,
+            self.shade._ECHO: random.choice(background_colors) + Style.BRIGHT,
         }
 
-        # Choose the color for the Shade
+        # Choose the color for the shade
         color = colors.get(shade, Style.RESET_ALL)
 
         if text == "":
@@ -294,27 +294,18 @@ class GhostInk:
         Returns:
         - str: A formatted string representing the etch.
         """
-        if isinstance(etch_input, dict):
-            # Pretty-print dictionaries
+        if isinstance(etch_input, (dict, list, tuple)):
             return json.dumps(etch_input, indent=4)
-        elif isinstance(etch_input, (list, tuple)):
-            # Join list/tuple elements
-            return ", ".join(str(item) for item in etch_input)
         elif isinstance(etch_input, set):
-            # Display sets
-            return "{" + ", ".join(str(item) for item in etch_input) + "}"
+            return json.dumps(list(etch_input), indent=4)
         elif isinstance(etch_input, str):
-            return etch_input  # Directly return strings
+            return etch_input
         elif hasattr(etch_input, "__dict__"):
-            # Format custom objects using their attributes
-            return ", ".join(
-                f"{key}: {value}" for key, value in vars(etch_input).items()
-            )
+            return json.dumps(etch_input.__dict__, indent=4)
         else:
-            # Handle other data types or raise a warning
-            return str(etch_input)  # Convert any other type to string
+            return str(etch_input)
 
-    def _format_echos(self, echoes: List[str] = []):
+    def _format_echoes(self, echoes: List[str] = []):
 
         if not echoes:
             return ()
@@ -343,11 +334,11 @@ class GhostInk:
         filename = file.split("/")[-1]
         path = "/".join(file.split("/")[:-1])
         colored_filename = self._color_text(etch_shade, filename)
-        colored_Shade = self._color_text(etch_shade)
+        colored_shade = self._color_text(etch_shade)
         if echoes:
             colored_echoes = (
                 " ".join(
-                    self._color_text(self.Shade._ECHO, " " + echo + " ")
+                    self._color_text(self.shade._ECHO, " " + echo + " ")
                     for echo in echoes
                 )
                 + "\n"
@@ -357,7 +348,7 @@ class GhostInk:
             colored_echoes = ""
         etch += "\n"
 
-        return f"[{colored_Shade}] {etch}{colored_echoes}(Ln:{self._color_text(etch_shade, line)} - {func} in {path}/{colored_filename})"
+        return f"[{colored_shade}] {etch}{colored_echoes}(Ln:{self._color_text(etch_shade, line)} - {func} in {path}/{colored_filename})"
 
     def _setup_logger(self, log_file, log_level=logging.DEBUG):
         """
