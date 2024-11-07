@@ -9,13 +9,13 @@
 To install `GhostInk`, add it to your project with pip:
 
 ```bash
-pip install ghosink
+pip install ghostink
 ```
 
 Then, import `GhostInk` into your Python files:
 
 ```python
-from ghosink import GhostInk
+from ghostink import GhostInk
 ```
 
 ---
