@@ -208,6 +208,8 @@ class GhostInk:
         for etch_shade, etch, file, line, func, echoes in sorted_etches:
             print("\n" + self._format_etch(etch_shade,
                   etch, file, line, func, echoes))
+
+            # * log to the file
             if self.log_to_file:
                 self.logger.debug(
                     f"[{etch_shade.name}] - {etch} - {file}:{line} in {func}"
@@ -316,7 +318,8 @@ class GhostInk:
         for echo in echoes:
             if "#" in echo:
                 continue
-            formatted_echo = echo.replace(" ", "_")
+            spaceless_echo = echo.strip()
+            formatted_echo = spaceless_echo.replace(" ", "_")
             formatted_echo = f"#{formatted_echo}"
             formatted_echoes.append(formatted_echo)
 
