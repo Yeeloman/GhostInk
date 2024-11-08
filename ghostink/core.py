@@ -91,20 +91,20 @@ class GhostInk:
         if curse:
             print(curse)
             print(
-                f"{Style.BRIGHT}{Fore.YELLOW}└── {
-                    caller_file}{Style.RESET_ALL}:"
-                f"{Style.BRIGHT}{Fore.MAGENTA}{
-                    caller_line}{Style.RESET_ALL} in "
-                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {
-                    timestamp}"
+                f"""{Style.BRIGHT}{Fore.YELLOW}└── {
+                    caller_file}{Style.RESET_ALL}:"""
+                f"""{Style.BRIGHT}{Fore.MAGENTA}{
+                    caller_line}{Style.RESET_ALL} in """
+                f"""{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {
+                    timestamp}"""
             )
         else:
             print(
-                f"{Style.BRIGHT}{Fore.YELLOW}{caller_file}{Style.RESET_ALL}:"
-                f"{Style.BRIGHT}{Fore.MAGENTA}{
-                    caller_line}{Style.RESET_ALL} in "
-                f"{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {
-                    timestamp}"
+                f"""{Style.BRIGHT}{Fore.YELLOW}{caller_file}{Style.RESET_ALL}:"""
+                f"""{Style.BRIGHT}{Fore.MAGENTA}{
+                    caller_line}{Style.RESET_ALL} in """
+                f"""{Style.BRIGHT}{Fore.RED}{caller_func}(){Style.RESET_ALL} at {
+                    timestamp}"""
             )
 
     def inkdrop(
@@ -140,8 +140,8 @@ class GhostInk:
         """
         # Display Title
         print(
-            f"\n{Style.BRIGHT}{Fore.CYAN}{
-                self.title}{Style.RESET_ALL}"
+            f"""\n{Style.BRIGHT}{Fore.CYAN}{
+                self.title}{Style.RESET_ALL}"""
         )
         formatted_echoes = self._format_echoes(echo_mask)
         filtered_etches = self.etches.copy()  # Start with all etches
@@ -189,8 +189,8 @@ class GhostInk:
         caller_line = caller_frame.lineno
 
         print(
-            f"\n{Fore.CYAN}Printed{Style.RESET_ALL} from: {Fore.RED}{caller_file}{
-                Style.RESET_ALL} at line {Fore.YELLOW}{caller_line}{Style.RESET_ALL}"
+            f"""\n{Fore.CYAN}Printed{Style.RESET_ALL} from: {Fore.RED}{caller_file}{
+                Style.RESET_ALL} at line {Fore.YELLOW}{caller_line}{Style.RESET_ALL}"""
         )
         print(
             f"{Fore.RED + Style.BRIGHT}Review completed etchs and remove them as necessary.{Style.RESET_ALL}\n"
