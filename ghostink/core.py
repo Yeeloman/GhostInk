@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import List, Optional
 from enum import Enum
 from colorama import Fore, Back, Style, init
+from .shades import Todo, Info, Debug, Warn, Error
 
 # Initialize colorama
 init(autoreset=True)
@@ -109,51 +110,10 @@ class GhostInk:
         shade: shade = shade.TODO,
         echoes: Optional[List[str]] = None,
     ) -> None:
-        """
-        Add a etch with specified text and shade to the Debugger's
-        etch list if it's not already present.
+        shade_cls = ShadeRegistry.get_shade_class(shade)
+        shade_instace = shade_cls(ghost_ink=self)
+        shade_instace.inker(etch_input, shade, echoes)
 
-        Parameters:
-        - etch_input (str or dict or object): The text or object to be added as a etch.
-        - shade (GhostInk.shade): The shade of the etch (default: GhostInk.shade.TODO).
-        - Echoes: (List of str): Tags added to the etch (task) for customized filtering
-        If etch_input is a dictionary or object, it is formatted using _format_etch_from_object method.
-        The relative path, line number, and function name of the caller are obtained using _get_relative_path method.
-        If shade is ERROR or DEBUG, stack trace is added to the etch text.
-        The etch is added to the etch list if it's not already present.
-        """
-        if shade == self.shade._ECHO:
-            raise ValueError(
-                "Attempted to use shade '_ECHO', which is not allowed for etch addition."
-            )
-
-        if isinstance(etch_input, str):
-            etch_text = etch_input
-        else:
-            etch_text = self._format_etch_from_object(etch_input)
-
-        relative_path, line_no, func_name = self._get_relative_path()
-
-        if shade in [self.shade.ERROR, self.shade.DEBUG, self.shade.WARN]:
-            stack_trace = traceback.format_stack()
-            colored_stack_trace = "".join(
-                f"{Style.BRIGHT}{Fore.RED + Style.DIM}{line}{Style.RESET_ALL}"
-                for line in stack_trace
-            )
-            etch_text += f"\nStack Trace:\n{colored_stack_trace}"
-
-        formatted_echoes = self._format_echoes(echoes)
-        formatted_etch = (
-            shade,
-            etch_text,
-            relative_path,
-            line_no,
-            func_name,
-            formatted_echoes,
-        )
-
-        if formatted_etch not in self.etches:
-            self.etches.add(formatted_etch)
 
     def whisper(
         self,
@@ -178,8 +138,7 @@ class GhostInk:
 
         # If no masks are provided, print all etches
         if shade_mask is None and file_mask is None and echo_mask is None:
-            filtered_etches = sorted(
-                filtered_etches, key=lambda x: x[0].value)
+            filtered_etches = sorted(filtered_etches, key=lambda x: x[0].value)
         else:
             # Apply filtering
             if shade_mask:
@@ -206,8 +165,7 @@ class GhostInk:
 
         # Print etchs
         for etch_shade, etch, file, line, func, echoes in sorted_etches:
-            print("\n" + self._format_etch(etch_shade,
-                  etch, file, line, func, echoes))
+            print("\n" + self._format_etch(etch_shade, etch, file, line, func, echoes))
 
             # * log to the file
             if self.log_to_file:
@@ -217,8 +175,7 @@ class GhostInk:
 
         # Caller information
         caller_frame = inspect.stack()[1]
-        caller_file = os.path.relpath(
-            caller_frame.filename, start=self.project_root)
+        caller_file = os.path.relpath(caller_frame.filename, start=self.project_root)
         caller_line = caller_frame.lineno
 
         print(
@@ -256,7 +213,7 @@ class GhostInk:
             Back.LIGHTBLUE_EX,
             Back.LIGHTMAGENTA_EX,
             Back.LIGHTCYAN_EX,
-            Back.LIGHTWHITE_EX
+            Back.LIGHTWHITE_EX,
         ]
         colors = {
             self.shade.TODO: Fore.YELLOW,
@@ -280,7 +237,7 @@ class GhostInk:
         Return the relative path and line number of the code file
         calling this method, relative to the project's base directory.
         """
-        caller_frame = inspect.stack()[2]
+        caller_frame = inspect.stack()[3]
         full_path = caller_frame.filename
         relative_path = os.path.relpath(full_path, start=self.project_root)
         return relative_path, caller_frame.lineno, caller_frame.function
@@ -306,7 +263,7 @@ class GhostInk:
             return json.dumps(etch_input.__dict__, indent=4)
         else:
             etch_str = str(etch_input)
-            return f'{etch_str}'
+            return f"{etch_str}"
 
     def _format_echoes(self, echoes: List[str] = []):
 
@@ -382,12 +339,33 @@ class GhostInk:
             file_handler.setLevel(log_level)
 
             # Formatter including timestamp, level, and message
-            formatter = logging.Formatter(
-                "%(asctime)s - %(levelname)s - %(message)s")
+            formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
             file_handler.setFormatter(formatter)
 
             # Add the handler to the logger
             self.logger.addHandler(file_handler)
+
+
+class ShadeRegistry:
+    # Dictionary mapping each shade Enum to its corresponding class
+    shade_classes = {
+        GhostInk.shade.TODO: Todo,
+        GhostInk.shade.INFO: Info,
+        GhostInk.shade.DEBUG: Debug,
+        GhostInk.shade.WARN: Warn,
+        GhostInk.shade.ERROR: Error
+    }
+
+    @classmethod
+    def get_shade_class(cls, shade: GhostInk.shade):
+        """Returns the corresponding class for a given shade Enum."""
+        if shade == GhostInk.shade._ECHO:
+            raise ValueError(
+                "Attempted to use shade '_ECHO', which is not allowed for etch addition."
+            )
+        elif shade not in GhostInk.shade:
+            raise ValueError('unvalid shade')
+        return cls.shade_classes.get(shade)
 
 
 __all__ = ["GhostInk"]

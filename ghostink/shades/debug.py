@@ -1,5 +1,5 @@
 
-from base import BaseEtch
+from .base import BaseEtch
 
 
 class Debug(BaseEtch):
