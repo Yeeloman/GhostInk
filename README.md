@@ -86,6 +86,8 @@ ink.whisper(echo_mask=["database"])
      - `shade_mask`: Filter etches by Shade.
      - `file_mask`: Filter etches by specific file name.
      - `echo_mask`: Filter etches by specific echo (Tag)
+4. `get_shades(self):`
+  - return all the shades
 
 ---
 
@@ -97,7 +99,8 @@ from ghostink import GhostInk
 ink = GhostInk(title="Project Debugger")
 ink.drop("Fix memory leak", shade=GhostInk.Shade.WARN,
          echoes=['leaks', 'memory'])
-ink.drop("Checkpoint reached", shade=GhostInk.Shade.INFO)
+shades = ink.get_shades()
+ink.drop("Checkpoint reached", shade=shades.INFO)
 ink.drop("this is an importatnt TODO note DO NOT IGNORE")
 
 
