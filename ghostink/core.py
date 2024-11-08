@@ -5,7 +5,7 @@ import json
 import inspect
 import logging
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 from enum import Enum
 from colorama import Fore, Back, Style, init
 from .shades import Todo, Info, Debug, Warn, Error
@@ -34,6 +34,9 @@ class GhostInk:
         WARN = "WARN"
         ERROR = "ERROR"
         _ECHO = "ECHO"  # only for internal use
+
+    def get_shades(self):
+        return self.shade
 
     def __init__(
         self,
@@ -106,13 +109,19 @@ class GhostInk:
 
     def inkdrop(
         self,
-        etch_input: any,
-        shade: shade = shade.TODO,
+        etch_input: Union[str, None] = None,
+        shade: Optional["GhostInk.shade"] = None,
         echoes: Optional[List[str]] = None,
+        filename: Optional[str] = None
     ) -> None:
-        shade_cls = ShadeRegistry.get_shade_class(shade)
-        shade_instace = shade_cls(ghost_ink=self)
-        shade_instace.inker(etch_input, shade, echoes)
+        if filename:
+            # ? treating the file should be in this lvl
+            # ? in case there are multiple shades
+            pass
+        else:
+            shade_cls = ShadeRegistry.get_shade_class(shade)
+            shade_instace = shade_cls(ghost_ink=self)
+            shade_instace.inker(etch_input, shade, echoes)
 
 
     def whisper(

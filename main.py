@@ -2,6 +2,6 @@ from ghostink import GhostInk
 
 
 ink = GhostInk()
-ink.drop("test", GhostInk.shade.INFO, ['testing'])
-
+shade = ink.get_shades()
+ink.drop("test", shade.TODO, ['testing'])
 ink.whisper()

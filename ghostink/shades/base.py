@@ -6,7 +6,7 @@ class BaseEtch:
     def __init__(self, ghost_ink):
         self.ghost_ink = ghost_ink
 
-    def inker(self, etch_input, shade, echoes) -> None:
+    def inker(self, etch_input, shade, echoes, **kwargs) -> None:
         """
         Add a etch with specified text and shade to the Debugger's
         etch list if it's not already present.
