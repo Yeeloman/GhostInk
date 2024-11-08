@@ -112,17 +112,18 @@ class GhostInk:
         etch_input: Union[str, None] = None,
         shade: Optional["GhostInk.shade"] = None,
         echoes: Optional[List[str]] = None,
-        filename: Optional[str] = None
+        filename: Optional[str] = None,
     ) -> None:
         if filename:
             # ? treating the file should be in this lvl
             # ? in case there are multiple shades
             pass
         else:
+            if shade is None:
+                shade = self.shade.TODO
             shade_cls = ShadeRegistry.get_shade_class(shade)
             shade_instace = shade_cls(ghost_ink=self)
             shade_instace.inker(etch_input, shade, echoes)
-
 
     def whisper(
         self,
@@ -362,7 +363,7 @@ class ShadeRegistry:
         GhostInk.shade.INFO: Info,
         GhostInk.shade.DEBUG: Debug,
         GhostInk.shade.WARN: Warn,
-        GhostInk.shade.ERROR: Error
+        GhostInk.shade.ERROR: Error,
     }
 
     @classmethod
@@ -373,7 +374,7 @@ class ShadeRegistry:
                 "Attempted to use shade '_ECHO', which is not allowed for etch addition."
             )
         elif shade not in GhostInk.shade:
-            raise ValueError('unvalid shade')
+            raise ValueError("unvalid shade")
         return cls.shade_classes.get(shade)
 
 
