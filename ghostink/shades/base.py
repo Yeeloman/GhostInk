@@ -1,5 +1,6 @@
 import traceback
 from colorama import Fore, Back, Style, init
+from typing import List, Optional
 
 
 class BaseEtch:
@@ -44,7 +45,7 @@ class BaseEtch:
             )
             etch_text += f"\nStack Trace:\n{colored_stack_trace}"
 
-        formatted_echoes = self.ghost_ink._format_echoes(echoes)
+        formatted_echoes = self._format_echoes(echoes)
         formatted_etch = (
             shade,
             etch_text,
@@ -56,3 +57,20 @@ class BaseEtch:
 
         if formatted_etch not in self.ghost_ink.etches:
             self.ghost_ink.etches.add(formatted_etch)
+
+    def _format_echoes(self, echoes: List[str] = []):
+
+        if not echoes:
+            return ()
+
+        formatted_echoes = []
+
+        for echo in echoes:
+            if "#" in echo:
+                continue
+            spaceless_echo = echo.strip()
+            formatted_echo = spaceless_echo.replace(" ", "_")
+            formatted_echo = f"#{formatted_echo}"
+            formatted_echoes.append(formatted_echo)
+
+        return tuple(formatted_echoes)

@@ -1,0 +1,11 @@
+TODO:
+  - title: "testing from file"
+  - desc: "this is a description"
+  - priority: "low"
+  - subtasks:
+    - task: "testin 1"
+    - task2: "testing 2"
+
+
+ERROR:
+  - title: "this is the error"

@@ -1,12 +1,14 @@
 import os
-import random
-import traceback
+import yaml
 import json
+import shutil
+import random
 import inspect
 import logging
+import traceback
+from enum import Enum
 from datetime import datetime
 from typing import List, Optional, Union
-from enum import Enum
 from colorama import Fore, Back, Style, init
 from .shades import Todo, Info, Debug, Warn, Error
 
@@ -67,8 +69,17 @@ class GhostInk:
         self.drop = self.inkdrop
         self.ln = self.haunt
 
+        # sets up the dir where the logs and etches live
+        ghost_dir = os.path.join(self.project_root, ".ghost")
+        os.makedirs(ghost_dir, exist_ok=True)
+
         if log_to_file:
             self._setup_logger(log_file)
+
+    def clean(self):
+        ghost_path = os.path.join(self.project_root, ".ghost")
+        if os.path.exists(ghost_path):
+            shutil.rmtree(ghost_path)
 
     def haunt(self, curse: str = None) -> None:
         """
@@ -117,13 +128,23 @@ class GhostInk:
         if filename:
             # ? treating the file should be in this lvl
             # ? in case there are multiple shades
-            pass
+            filename_with_ext = f'{filename}.yml'
+            file_path = os.path.join(self.project_root, ".ghost", filename_with_ext)
+            try:
+                with open(file_path, 'r') as file:
+                    etch_from_file = yaml.safe_load(file)
+                    for shade_file, etch_file in etch_from_file.items():
+                        shade_cls = ShadeRegistry.get_shade_class(self.shade[shade_file])
+                        shade_instance = shade_cls(ghost_ink=self)
+                        shade_instance.dropper(etch_file)
+            except FileNotFoundError:
+                raise FileExistsError("The file do not exist")
         else:
             if shade is None:
                 shade = self.shade.TODO
             shade_cls = ShadeRegistry.get_shade_class(shade)
-            shade_instace = shade_cls(ghost_ink=self)
-            shade_instace.inker(etch_input, shade, echoes)
+            shade_instance = shade_cls(ghost_ink=self)
+            shade_instance.inker(etch_input, shade, echoes)
 
     def whisper(
         self,
@@ -143,7 +164,7 @@ class GhostInk:
             f"""\n{Style.BRIGHT}{Fore.CYAN}{
                 self.title}{Style.RESET_ALL}"""
         )
-        formatted_echoes = self._format_echoes(echo_mask)
+        formatted_echoes = ShadeRegistry.get_shade_class(self.shade.TODO)._format_echoes(echo_mask)
         filtered_etches = self.etches.copy()  # Start with all etches
 
         # If no masks are provided, print all etches
@@ -275,22 +296,6 @@ class GhostInk:
             etch_str = str(etch_input)
             return f"{etch_str}"
 
-    def _format_echoes(self, echoes: List[str] = []):
-
-        if not echoes:
-            return ()
-
-        formatted_echoes = []
-
-        for echo in echoes:
-            if "#" in echo:
-                continue
-            spaceless_echo = echo.strip()
-            formatted_echo = spaceless_echo.replace(" ", "_")
-            formatted_echo = f"#{formatted_echo}"
-            formatted_echoes.append(formatted_echo)
-
-        return tuple(formatted_echoes)
 
     def _format_etch(self, etch_shade, etch, file, line, func, echoes) -> str:
         """
@@ -329,7 +334,7 @@ class GhostInk:
         base_dir = self.project_root
 
         # Define the path for the logs directory at the project root
-        log_dir = os.path.join(base_dir, "logs")
+        log_dir = os.path.join(base_dir, ".ghost", "logs")
 
         # Ensure the logs directory exists
         os.makedirs(log_dir, exist_ok=True)
