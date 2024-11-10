@@ -1,4 +1,3 @@
-import traceback
 from colorama import Fore, Back, Style, init
 from typing import List, Optional
 
@@ -33,18 +32,6 @@ class BaseEtch:
 
         relative_path, line_no, func_name = self.ghost_ink._get_relative_path()
 
-        if shade in [
-            self.ghost_ink.shade.ERROR,
-            self.ghost_ink.shade.DEBUG,
-            self.ghost_ink.shade.WARN,
-        ]:
-            stack_trace = traceback.format_stack()
-            colored_stack_trace = "".join(
-                f"{Style.BRIGHT}{Fore.RED + Style.DIM}{line}{Style.RESET_ALL}"
-                for line in stack_trace
-            )
-            etch_text += f"\nStack Trace:\n{colored_stack_trace}"
-
         formatted_echoes = self._format_echoes(echoes)
         formatted_etch = (
             shade,
@@ -58,8 +45,7 @@ class BaseEtch:
         if formatted_etch not in self.ghost_ink.etches:
             self.ghost_ink.etches.add(formatted_etch)
 
-    def _format_echoes(self, echoes: List[str] = []):
-
+    def _format_echoes(self, echoes: List[str] = []) -> tuple:
         if not echoes:
             return ()
 

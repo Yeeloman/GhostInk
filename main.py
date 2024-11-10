@@ -2,7 +2,9 @@ from ghostink import GhostInk
 
 
 ink = GhostInk()
+print("showcase")
 shade = ink.get_shades()
-ink.drop('this an info ask', shade.INFO, ['database', 'api'])
-ink.drop(filename="test")
-ink.whisper()
+ink.drop('this an info ask', shade.DEBUG, ['database', 'api'])
+ink.ln('ln test')
+# ink.drop(filename="test")
+ink.whisper(echo_mask=["database"])

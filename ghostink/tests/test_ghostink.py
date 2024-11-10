@@ -51,11 +51,6 @@ def test_inkdrop_dict_input(ghostink_instance):
     )
 
 
-def test_inkdrop_error_stacktrace(ghostink_instance):
-    ghostink_instance.inkdrop("Error etch", shade=GhostInk.shade.ERROR)
-    assert any("Stack Trace" in etch[1] for etch in ghostink_instance.etches)
-
-
 def test_whisper(capsys, ghostink_instance):
     ghostink_instance.inkdrop("Debug message", shade=GhostInk.shade.DEBUG)
     ghostink_instance.inkdrop("Info message", shade=GhostInk.shade.INFO)
