@@ -1,31 +1,28 @@
 import pytest
 import os
-import json
-import logging
 from ghostink import GhostInk
 
 
 # Initial setup for testing the GhostInk class
 @pytest.fixture
 def ghostink_instance():
-    return GhostInk(title="TestInstance", project_root="test_project", log_to_file=True)
+    return GhostInk(title="TestInstance", project_root="test_project")
 
 
 # Teardown: clean up generated logs after tests
 @pytest.fixture(scope="function", autouse=True)
 def clean_up_logs():
     yield
-    if os.path.exists("test_project/logs"):
-        for file in os.listdir("test_project/logs"):
-            os.remove(os.path.join("test_project/logs", file))
-        os.rmdir("test_project/logs")
+    if os.path.exists("test_project/.ghost"):
+        for file in os.listdir("test_project/.ghost"):
+            os.remove(os.path.join("test_project/.ghost", file))
+        os.rmdir("test_project/.ghost")
 
 
 def test_initialization():
     ink = GhostInk(title="TestTitle", project_root="test_root")
     assert ink.title == "TestTitle"
     assert ink.project_root == "test_root"
-    assert not ink.log_to_file  # default value
     assert ink.etches == set()
 
 
@@ -64,7 +61,7 @@ def test_color_text(ghostink_instance):
     text = "Test"
     for shade in GhostInk.shade:
         colored_text = ghostink_instance._color_text(shade, text)
-        assert text in colored_text  # Ensure the text is wrapped with color codes
+        assert text in colored_text
 
 
 def test_get_relative_path(ghostink_instance):
