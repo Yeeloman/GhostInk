@@ -60,9 +60,7 @@ class GhostInk:
         self.drop = self.inkdrop
         self.ln = self.haunt
 
-        # sets up the dir where the logs and etches live
-        ghost_dir_path = os.path.join(self.project_root, ".ghost")
-        os.makedirs(ghost_dir_path, exist_ok=True)
+        self._create_etch_dir()
 
     def clean(self):
         ghost_path = os.path.join(self.project_root, ".ghost")
@@ -309,6 +307,29 @@ class GhostInk:
         etch += "\n"
 
         return f"[{colored_shade}] {etch}{colored_echoes}(Ln:{self._color_text(etch_shade, line)} - {func} in {path}/{colored_filename})"
+
+    def _create_etch_dir(self):
+        # sets up the dir where the logs and etches live
+        ghost_dir_path = os.path.join(self.project_root, ".ghost")
+        os.makedirs(ghost_dir_path, exist_ok=True)
+
+        example_path = os.path.join(ghost_dir_path, "example.yml")
+        content = {
+            "TODO": [
+                {
+                    "title": "Title of the main task",
+                    "description": "Detailed description of the task",
+                    "priority": "High",  # Low, Medium
+                    "subtasks": [
+                        {"name": "Subtask 1", "status": "Pending"},  # completed
+                        {"name": "Subtask 2", "status": "In-progress"},
+                        {"name": "Subtask 2", "status": "Completed"},
+                    ],
+                }
+            ]
+        }
+        with open(example_path, "w") as file:
+            yaml.dump(content, file)
 
 
 class ShadeRegistry:

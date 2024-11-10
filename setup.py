@@ -31,4 +31,10 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
+    # Maps `ghostink` command to `main` in cli.py
+    entry_points={
+        "console_scripts": [
+            "ghostink=ghostink.cli:main",
+        ],
+    },
 )
