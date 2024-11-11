@@ -39,15 +39,33 @@ def main(
 def todo(
     message: Annotated[str, typer.Argument(...)],
 ):
-    print(f"first enter {message}")
+    console.print(f"todo: {message}")
 
 
 @app.command()
 def info(
     message: Annotated[str, typer.Argument(...)],
 ):
-    print(f"first enter {message}")
+    """
+    Prints an informational message to the console.
+    """
+    console.print(f"info: {message}")
 
+@app.command()
+def debug(
+    message: Annotated[str, typer.Argument(...)],
+):
+    console.print(f"debug: {message}")
+@app.command()
+def warn(
+    message: Annotated[str, typer.Argument(...)],
+):
+    console.print(f"warn: {message}")
+@app.command()
+def error(
+    message: Annotated[str, typer.Argument(...)],
+):
+    console.print(f"error: {message}")
 
 if __name__ == "__main__":
     app()
