@@ -1,4 +1,7 @@
 from .base import BaseEtch
+from rich import print, pretty
+
+pretty.install()
 
 
 class Debug(BaseEtch):

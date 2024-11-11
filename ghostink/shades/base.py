@@ -1,5 +1,7 @@
-from colorama import Fore, Back, Style, init
-from typing import List, Optional
+from typing import List
+from rich import pretty
+
+pretty.install()
 
 
 class BaseEtch:

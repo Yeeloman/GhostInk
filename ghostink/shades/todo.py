@@ -1,5 +1,7 @@
 from .base import BaseEtch
+from rich import print, pretty
 
+pretty.install()
 
 class Todo(BaseEtch):
     def __init__(self, ghost_ink) -> None:

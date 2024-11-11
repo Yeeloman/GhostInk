@@ -34,7 +34,7 @@ setup(
     # Maps `ghostink` command to `main` in cli.py
     entry_points={
         "console_scripts": [
-            "ghostink=ghostink.cli:main",
+            "ghosty=ghostink.cli:app",
         ],
     },
 )
