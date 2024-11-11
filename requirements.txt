@@ -32,6 +32,9 @@ rfc3986==2.0.0
 rich==13.9.4
 SecretStorage==3.3.3
 setuptools==75.3.0
+shellingham==1.5.4
 twine==5.1.1
+typer==0.13.0
+typing_extensions==4.12.2
 urllib3==2.2.3
 zipp==3.20.2
