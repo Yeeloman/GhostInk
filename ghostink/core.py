@@ -8,6 +8,7 @@ from enum import Enum
 from rich import pretty
 from rich.console import Console
 from rich.text import Text
+from rich.syntax import Syntax
 from datetime import datetime
 from typing import List, Optional, Union
 from .shades import Todo, Info, Debug, Warn, Error
@@ -20,7 +21,6 @@ class GhostInk:
     """
     Prints file name, line number, function name, and timestamp of the method call.
     """
-
     class shade(Enum):
         """
         Defines an Enum class 'shade' with options:
@@ -323,11 +323,10 @@ class GhostInk:
 
         else:
             colored_echoes = Text("")
-        etch += "\n"
         colored_line_nb = self._color_text(etch_shade, str(line))
         output = Text(f"[")
         output.append(colored_shade)
-        output.append(f"] {etch}")
+        output.append(f"] {etch}\n")
         output.append(colored_echoes)
         output.append(f"(Ln:")
         output.append(colored_line_nb)
