@@ -7,3 +7,5 @@ GhostInk.egg-info/
 logs/
 **/logs
 brainstorm.md
+test_root/
+test_project/
