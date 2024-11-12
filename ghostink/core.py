@@ -21,6 +21,7 @@ class GhostInk:
     """
     Prints file name, line number, function name, and timestamp of the method call.
     """
+
     class shade(Enum):
         """
         Defines an Enum class 'shade' with options:
@@ -318,7 +319,9 @@ class GhostInk:
             colored_echoes = Text("")
             for echo in echoes:
                 colored_echoes.append(" ")
-                colored_echoes.append(self._color_text(self.shade._ECHO, " " + echo + " "))
+                colored_echoes.append(
+                    self._color_text(self.shade._ECHO, " " + echo + " ")
+                )
             colored_echoes.append("\n")
 
         else:

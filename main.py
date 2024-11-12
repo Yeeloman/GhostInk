@@ -1,7 +1,7 @@
 from ghostink import GhostInk
 
 
-ink = GhostInk()
+ink = GhostInk(project_root=".")
 shade = ink.get_shades()
 nested_dict = {
     "user": {
