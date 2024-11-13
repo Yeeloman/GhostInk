@@ -5,7 +5,6 @@ from rich.console import Console
 
 pretty.install()
 console = Console()
-app = typer.Typer(no_args_is_help=True, help="Help message for todo subcommand")
 
 def info_command(
     message: Annotated[str, typer.Argument(...)],
@@ -14,7 +13,3 @@ def info_command(
     Prints an informational message to the console.
     """
     console.print(f"info: {message}")
-
-
-if __name__=="__main__":
-    app()

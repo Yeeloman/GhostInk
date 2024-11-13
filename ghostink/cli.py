@@ -20,7 +20,10 @@ __version__ = "0.1.0"
 
 pretty.install()
 console = Console()
-app = typer.Typer(no_args_is_help=True, help="this is help message")
+app = typer.Typer(
+    no_args_is_help=True,
+    help="To use ghosty you must set up the GHOSTINK (project root path).",
+)
 
 CONFIG_FILE = Path.home() / ".ghostink_config"
 
@@ -45,11 +48,13 @@ def save_project_path(path: Path):
 
 
 # Initialize project path from the environment or config
+GHOST_PATH = None
 PROJECT_PATH = load_project_path()
-GHOST_PATH = os.path.join(PROJECT_PATH, '.ghost')
+
 
 @app.callback(invoke_without_command=True)
-def main(
+def ghosty(
+    ctx: typer.Context,
     project_root: Annotated[
         Optional[Path],
         typer.Option(
@@ -78,9 +83,11 @@ def main(
     ] = None,
 ):
     global PROJECT_PATH
+    global GHOST_PATH
     if project_root:
         PROJECT_PATH = project_root.expanduser().resolve()
         save_project_path(PROJECT_PATH)
+        GHOST_PATH = os.path.join(PROJECT_PATH, ".ghost")
 
     if not PROJECT_PATH:
         console.print(
@@ -93,14 +100,28 @@ def main(
         raise typer.Exit(code=1)
     if version:
         raise typer.Exit()
+    
+    ctx.obj = {"GHOST_PATH": GHOST_PATH}
+    Path(GHOST_PATH).mkdir(exist_ok=True)
 
 
 # adding the subcommands
-app.add_typer(command_todo.app, name="todo")
-app.add_typer(command_info.app, name="info")
-app.add_typer(command_debug.app, name="debug")
-app.add_typer(command_warn.app, name="warn")
-app.add_typer(command_error.app, name="error")
+app.command("todo", help="Everything related to Todo shade in ghostink")(
+    command_todo.todo
+)
+app.command("t", help="Alias of todo")(command_todo.todo)
+app.command("info", help="Everything related to Info shade in ghostink")(
+    command_info.info_command
+)
+app.command("debug", help="Everything related to Debug shade in ghostink")(
+    command_debug.debug_command
+)
+app.command("warn", help="Everything related to Warn shade in ghostink")(
+    command_warn.warn_command
+)
+app.command("error", help="Everything related to Error shade in ghostink")(
+    command_error.error_command
+)
 
 if __name__ == "__main__":
     app()
