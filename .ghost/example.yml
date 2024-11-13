@@ -1,20 +1,11 @@
 TODO:
-  - id: 1
-    title: "Implement GhostInk CLI"
-    description: "Develop and test the CLI for managing .ghost directory and files."
-    priority: "high"
-    status: "in-progress"
-    tags:
-      - cli
-      - ghostink
-      - development
-    subtasks:
-      - id: 1
-        title: "Create main CLI structure"
-        status: "completed"
-      - id: 2
-        title: "Add todo functionality"
-        status: "in-progress"
-      - id: 3
-        title: "Implement environment variable handling"
-        status: "not-started"
+- description: Detailed description of the task
+  priority: High
+  subtasks:
+  - name: Subtask 1
+    status: Pending
+  - name: Subtask 2
+    status: In-progress
+  - name: Subtask 2
+    status: Completed
+  title: Title of the main task

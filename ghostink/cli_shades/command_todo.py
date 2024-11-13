@@ -3,7 +3,7 @@ import typer
 from rich import pretty
 from pathlib import Path
 from typing import Optional
-from rich.prompt import Prompt
+from rich.prompt import Prompt, Confirm
 from rich.console import Console
 from typing_extensions import Annotated
 
@@ -95,7 +95,12 @@ def delete__all_todo_entries() -> None:
     if not FILE_PATH.exists():
         console.print("The specified file does not exist.")
         return
-
+    
+    confirm_delete = Confirm.ask('Are you sure you want to delete all TODO entries?', default=False)
+    if not confirm_delete:
+        console.print('Deletion canceled.')
+        return
+    
     todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
     if todo_list_obj and "TODO" in todo_list_obj:
         todo_list_obj.pop('TODO')
