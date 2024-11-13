@@ -1,4 +1,3 @@
-import os
 import yaml
 import typer
 from rich import pretty
@@ -11,22 +10,23 @@ from typing_extensions import Annotated
 pretty.install()
 console = Console()
 
-GHOST_PATH = None
+FILE_PATH = None
 
-def create_new_todo(file_path):
+
+def create_todo_entry() -> None:
     todo_list_obj = None
     new_todo = {}
     todo_id = 1
 
-    if file_path.exists():
-        todo_list_obj = yaml.safe_load(file_path.open("r"))
+    if FILE_PATH.exists():
+        todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
         if todo_list_obj:
             todo_id = len(todo_list_obj["TODO"]) + 1
         else:
             todo_list_obj = {"TODO": []}
     else:
         todo_list_obj = {"TODO": []}
-        file_path.touch()
+        FILE_PATH.touch()
 
     new_todo = {"id": todo_id}
     new_todo["title"] = Prompt.ask(
@@ -65,8 +65,45 @@ def create_new_todo(file_path):
 
     todo_list_obj["TODO"].append(new_todo)
     todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
-    file_path.write_text(todo_yml)
-    console.print(f'Todo added to {file_path}')
+    FILE_PATH.write_text(todo_yml)
+    console.print(f"Todo added to {FILE_PATH}")
+
+
+def delete_todo_entry(todo_id: int) -> None:
+    if not FILE_PATH.exists():
+        console.print("The specified file does not exist.")
+        return
+
+    todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
+    if todo_list_obj and "TODO" in todo_list_obj:
+        original_count = len(todo_list_obj["TODO"])
+        todo_list_obj["TODO"] = [
+            todo for todo in todo_list_obj["TODO"] if todo["id"] != todo_id
+        ]
+        new_count = len(todo_list_obj["TODO"])
+
+        if new_count < original_count:
+            todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
+            FILE_PATH.write_text(todo_yml)
+        else:
+            console.print(f"No Todo found with the ID {todo_id}")
+    else:
+        console.print("No TODOs found in the file.")
+
+
+def delete__all_todo_entries() -> None:
+    if not FILE_PATH.exists():
+        console.print("The specified file does not exist.")
+        return
+
+    todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
+    if todo_list_obj and "TODO" in todo_list_obj:
+        todo_list_obj.pop('TODO')
+        todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
+        FILE_PATH.write_text(todo_yml)
+    else:
+        console.print("No TODOs found in the file.")
+
 
 def todo(
     ctx: typer.Context,
@@ -79,16 +116,39 @@ def todo(
             help="The name of the file to process.",
         ),
     ],
-    new_entry: Annotated[Optional[bool], typer.Option(
-        "--new",
-        "-n",
-        help='create a new todo entry in the specified file',
-    )] = True,
+    new_entry: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--new",
+            "-n",
+            help="create a new todo entry in the specified file",
+        ),
+    ] = True,
+    delete: Annotated[
+        Optional[int],
+        typer.Option(
+            "--delete",
+            "-d",
+            help="delete a todo entry in the specified file",
+        ),
+    ] = -1,
+    delete_all: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--delete-all",
+            "-D",
+            help="delete all todo entries in the specified file",
+        ),
+    ] = False,
 ):
-    global GHOST_PATH
+    global FILE_PATH
 
-    GHOST_PATH = ctx.obj.get("GHOST_PATH")
-    file_path = Path(GHOST_PATH) / f"{filename}.yml"
+    ghost_path = ctx.obj.get("GHOST_PATH")
+    FILE_PATH = Path(ghost_path) / f"{filename}.yml"
 
-    if new_entry:
-        create_new_todo(file_path)
+    if delete >= 0:
+        delete_todo_entry(delete)
+    elif delete_all:
+        delete__all_todo_entries()
+    elif new_entry:
+        create_todo_entry()

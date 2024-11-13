@@ -9,3 +9,4 @@ logs/
 brainstorm.md
 test_root/
 test_project/
+.ghost/
