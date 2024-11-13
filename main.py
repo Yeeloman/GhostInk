@@ -1,7 +1,7 @@
 from ghostink import GhostInk
+# from pathlib import Path
 
-
-ink = GhostInk(project_root=".")
+ink = GhostInk(project_root='.')
 shade = ink.get_shades()
 nested_dict = {
     "user": {
@@ -19,3 +19,4 @@ ink.drop(nested_dict, shade.DEBUG, ['database', 'api'])
 # ink.drop('this an warn ask', shade.WARN, ['database'])
 # ink.drop(filename="test")
 ink.whisper()
+ink.clean()

@@ -6,10 +6,10 @@ import random
 import inspect
 from enum import Enum
 from rich import pretty
-from rich.console import Console
+from pathlib import Path
 from rich.text import Text
-from rich.syntax import Syntax
 from datetime import datetime
+from rich.console import Console
 from typing import List, Optional, Union
 from .shades import Todo, Info, Debug, Warn, Error
 
@@ -66,8 +66,8 @@ class GhostInk:
         self._create_etch_dir()
 
     def clean(self):
-        ghost_path = os.path.join(self.project_root, ".ghost")
-        if os.path.exists(ghost_path):
+        ghost_path = Path(self.project_root) / ".ghost"
+        if ghost_path.exists():
             shutil.rmtree(ghost_path)
 
     def haunt(self, message: str = None) -> None:
@@ -110,10 +110,7 @@ class GhostInk:
         filename: Optional[str] = None,
     ) -> None:
         if filename:
-            # ? treating the file should be in this lvl
-            # ? in case there are multiple shades
-            filename_with_ext = f"{filename}.yml"
-            file_path = os.path.join(self.project_root, ".ghost", filename_with_ext)
+            file_path = Path(self.project_root) / ".ghost"/ f"{filename}.yml"
             try:
                 with open(file_path, "r") as file:
                     etch_from_file = yaml.safe_load(file)
@@ -124,7 +121,7 @@ class GhostInk:
                         shade_instance = shade_cls(ghost_ink=self)
                         shade_instance.dropper(etch_file)
             except FileNotFoundError:
-                raise FileExistsError("The file do not exist")
+                raise FileExistsError("The specified file do not exist")
         else:
             if shade is None:
                 shade = self.shade.TODO
@@ -273,6 +270,7 @@ class GhostInk:
         Return the relative path and line number of the code file
         calling this method, relative to the project's base directory.
         """
+        # TODO change from os.path to Path later
         caller_frame = inspect.stack()[3]
         full_path = caller_frame.filename
         relative_path = os.path.relpath(full_path, start=self.project_root)
