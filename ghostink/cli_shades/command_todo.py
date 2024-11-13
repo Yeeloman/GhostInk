@@ -3,6 +3,7 @@ import yaml
 import typer
 from rich import pretty
 from pathlib import Path
+from typing import Optional
 from rich.prompt import Prompt
 from rich.console import Console
 from typing_extensions import Annotated
@@ -12,8 +13,20 @@ console = Console()
 
 GHOST_PATH = None
 
-def create_new_todo(todo_id, todo_list_obj):
+def create_new_todo(file_path):
+    todo_list_obj = None
     new_todo = {}
+    todo_id = 1
+
+    if file_path.exists():
+        todo_list_obj = yaml.safe_load(file_path.open("r"))
+        if todo_list_obj:
+            todo_id = len(todo_list_obj["TODO"]) + 1
+        else:
+            todo_list_obj = {"TODO": []}
+    else:
+        todo_list_obj = {"TODO": []}
+        file_path.touch()
 
     new_todo = {"id": todo_id}
     new_todo["title"] = Prompt.ask(
@@ -51,6 +64,9 @@ def create_new_todo(todo_id, todo_list_obj):
             new_todo["subtasks"].append(subtask)
 
     todo_list_obj["TODO"].append(new_todo)
+    todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
+    file_path.write_text(todo_yml)
+    console.print(f'Todo added to {file_path}')
 
 def todo(
     ctx: typer.Context,
@@ -63,26 +79,16 @@ def todo(
             help="The name of the file to process.",
         ),
     ],
+    new_entry: Annotated[Optional[bool], typer.Option(
+        "--new",
+        "-n",
+        help='create a new todo entry in the specified file',
+    )] = True,
 ):
     global GHOST_PATH
-
-    todo_list_obj = None
-    todo_id = 1
 
     GHOST_PATH = ctx.obj.get("GHOST_PATH")
     file_path = Path(GHOST_PATH) / f"{filename}.yml"
 
-    if file_path.exists():
-        todo_list_obj = yaml.safe_load(file_path.open("r"))
-        if todo_list_obj:
-            todo_id = len(todo_list_obj["TODO"]) + 1
-        else:
-            todo_list_obj = {"TODO": []}
-    else:
-        todo_list_obj = {"TODO": []}
-        file_path.touch()
-
-    create_new_todo(todo_id, todo_list_obj)
-    todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
-    file_path.write_text(todo_yml)
-    console.print(f'Todo added to {file_path}')
+    if new_entry:
+        create_new_todo(file_path)
