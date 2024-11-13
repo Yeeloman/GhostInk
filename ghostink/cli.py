@@ -55,6 +55,15 @@ PROJECT_PATH = load_project_path()
 @app.callback(invoke_without_command=True)
 def ghosty(
     ctx: typer.Context,
+    show_path: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--show-path",
+            "-P",
+            is_eager=True,
+            help="Show the .ghost directory path.",
+        ),
+    ] = None,
     project_root: Annotated[
         Optional[Path],
         typer.Option(
@@ -100,7 +109,9 @@ def ghosty(
         raise typer.Exit(code=1)
     if version:
         raise typer.Exit()
-    
+    if show_path:
+        console.print(f".ghost dir in: {GHOST_PATH}")
+        raise typer.Exit()
     ctx.obj = {"GHOST_PATH": GHOST_PATH}
     Path(GHOST_PATH).mkdir(exist_ok=True)
 

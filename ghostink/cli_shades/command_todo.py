@@ -12,37 +12,10 @@ console = Console()
 
 GHOST_PATH = None
 
-
-def todo(
-    ctx: typer.Context,
-    filename: Annotated[
-        str,
-        typer.Option(
-            "--filename",
-            "-f",
-            show_default=None,
-            help="The name of the file to process.",
-        ),
-    ],
-):
-    global GHOST_PATH
-
-    todo_list_obj = None
+def create_new_todo(todo_id, todo_list_obj):
     new_todo = {}
-    todo_id = 1
 
-    GHOST_PATH = ctx.obj.get("GHOST_PATH")
-    file_path = Path(GHOST_PATH) / f"{filename}.yml"
-
-    if file_path.exists():
-        todo_list_obj = yaml.safe_load(file_path.open("r"))
-        if todo_list_obj:
-            todo_id = len(todo_list_obj["TODO"]) + 1
-    else:
-        file_path.touch()
-
-    # Prompt the user for the todo task
-    new_todo = {"id": todo_id, "subtasks": []}
+    new_todo = {"id": todo_id}
     new_todo["title"] = Prompt.ask(
         "Title", default=f"Todo N°{todo_id}", show_default=True
     )
@@ -63,21 +36,53 @@ def todo(
     )
     tags = Prompt.ask("Tags (comma-separated)")
     new_todo["tags"] = [tag.strip() for tag in tags.split(",")]
-    subtask_number = int(Prompt.ask("How many Subtasks", default=0, show_default=True))
+    if new_todo["status"] == "Pending":
+        new_todo["subtasks"] = []
+        subtask_number = int(
+            Prompt.ask("How many Subtasks", default="0", show_default=True)
+        )
+        for i in range(subtask_number):
+            subtask = {
+                "id": i + 1,
+                "title": Prompt.ask(f"Title for subtask {i + 1}"),
+                "status": "Pending",
+            }
 
-    for i in range(subtask_number):
-        subtask = {
-            "id": i + 1,
-            "title": Prompt.ask(f"Title for subtask {i + 1}"),
-            "status": Prompt.ask(
-                f"Status for subtask {i + 1}",
-                choices=["Pending", "Completed"],
-                case_sensitive=False,
-                show_choices=True,
-                default="Pending",
-            ),
-        }
-
-        new_todo["subtasks"].append(subtask)
+            new_todo["subtasks"].append(subtask)
 
     todo_list_obj["TODO"].append(new_todo)
+
+def todo(
+    ctx: typer.Context,
+    filename: Annotated[
+        str,
+        typer.Option(
+            "--filename",
+            "-f",
+            show_default=None,
+            help="The name of the file to process.",
+        ),
+    ],
+):
+    global GHOST_PATH
+
+    todo_list_obj = None
+    todo_id = 1
+
+    GHOST_PATH = ctx.obj.get("GHOST_PATH")
+    file_path = Path(GHOST_PATH) / f"{filename}.yml"
+
+    if file_path.exists():
+        todo_list_obj = yaml.safe_load(file_path.open("r"))
+        if todo_list_obj:
+            todo_id = len(todo_list_obj["TODO"]) + 1
+        else:
+            todo_list_obj = {"TODO": []}
+    else:
+        todo_list_obj = {"TODO": []}
+        file_path.touch()
+
+    create_new_todo(todo_id, todo_list_obj)
+    todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
+    file_path.write_text(todo_yml)
+    console.print(f'Todo added to {file_path}')
