@@ -4,61 +4,61 @@ from rich import pretty
 pretty.install()
 
 
-class BaseEtch:
+class Baseentry:
     def __init__(self, ghost_ink):
         self.ghost_ink = ghost_ink
 
-    def inker(self, etch_input, shade, echoes, **kwargs) -> None:
+    def inker(self, entry_input, shade, tags, **kwargs) -> None:
         """
-        Add a etch with specified text and shade to the Debugger's
-        etch list if it's not already present.
+        Add a entry with specified text and shade to the Debugger's
+        entry list if it's not already present.
 
         Parameters:
-        - etch_input (str or dict or object): The text or object to be added as a etch.
-        - shade (GhostInk.shade): The shade of the etch (default: GhostInk.shade.TODO).
-        - Echoes: (List of str): Tags added to the etch (task) for customized filtering
-        If etch_input is a dictionary or object, it is formatted using _format_etch_from_object method.
+        - entry_input (str or dict or object): The text or object to be added as a entry.
+        - shade (GhostInk.shade): The shade of the entry (default: GhostInk.shade.TODO).
+        - tags: (List of str): Tags added to the entry (task) for customized filtering
+        If entry_input is a dictionary or object, it is formatted using _format_entry_from_object method.
         The relative path, line number, and function name of the caller are obtained using _get_relative_path method.
-        If shade is ERROR or DEBUG, stack trace is added to the etch text.
-        The etch is added to the etch list if it's not already present.
+        If shade is ERROR or DEBUG, stack trace is added to the entry text.
+        The entry is added to the entry list if it's not already present.
         """
-        if shade == self.ghost_ink.shade._ECHO:
+        if shade == self.ghost_ink.shade._tag:
             raise ValueError(
-                "Attempted to use shade '_ECHO', which is not allowed for etch addition."
+                "Attempted to use shade '_tag', which is not allowed for entry addition."
             )
 
-        if isinstance(etch_input, str):
-            etch_text = etch_input
+        if isinstance(entry_input, str):
+            entry_text = entry_input
         else:
-            etch_text = self.ghost_ink._format_etch_from_object(etch_input)
+            entry_text = self.ghost_ink._format_entry_from_object(entry_input)
 
         relative_path, line_no, func_name = self.ghost_ink._get_relative_path()
 
-        formatted_echoes = self._format_echoes(echoes)
-        formatted_etch = (
+        formatted_tags = self._format_tags(tags)
+        formatted_entry = (
             shade,
-            etch_text,
+            entry_text,
             relative_path,
             line_no,
             func_name,
-            formatted_echoes,
+            formatted_tags,
         )
 
-        if formatted_etch not in self.ghost_ink.etches:
-            self.ghost_ink.etches.add(formatted_etch)
+        if formatted_entry not in self.ghost_ink.entries:
+            self.ghost_ink.entries.add(formatted_entry)
 
-    def _format_echoes(self, echoes: List[str] = []) -> tuple:
-        if not echoes:
+    def _format_tags(self, tags: List[str] = []) -> tuple:
+        if not tags:
             return ()
 
-        formatted_echoes = []
+        formatted_tags = []
 
-        for echo in echoes:
-            if "#" in echo:
+        for tag in tags:
+            if "#" in tag:
                 continue
-            spaceless_echo = echo.strip()
-            formatted_echo = spaceless_echo.replace(" ", "_")
-            formatted_echo = f"#{formatted_echo}"
-            formatted_echoes.append(formatted_echo)
+            spaceless_tag = tag.strip()
+            formatted_tag = spaceless_tag.replace(" ", "_")
+            formatted_tag = f"#{formatted_tag}"
+            formatted_tags.append(formatted_tag)
 
-        return tuple(formatted_echoes)
+        return tuple(formatted_tags)

@@ -17,6 +17,7 @@ from .cli_shades import (
 # from .core import GhostInk
 
 __version__ = "0.1.0"
+APP_NAME = "ghosty"
 
 pretty.install()
 console = Console()
@@ -25,7 +26,9 @@ app = typer.Typer(
     help="To use ghosty you must set up the GHOSTINK (project root path).",
 )
 
-CONFIG_FILE = Path.home() / ".ghostink_config"
+APP_DIR = Path(typer.get_app_dir(APP_NAME))
+APP_DIR.mkdir(exist_ok=True)
+CONFIG_FILE = APP_DIR / ".ghostink_config"
 
 
 def load_project_path() -> Optional[Path]:
@@ -104,7 +107,7 @@ def ghosty(
             "Please set the path using one of the following methods:\n"
             '1. Export the GHOSTINK variable: [bold]export GHOSTINK="~/path/to/project_root"[/bold]\n'
             "2. Use the [bold]--set-path[/bold] option to set it for this session: [bold]ghosty --set-path ~/path/to/project_root[/bold]"
-            "\n[blue]Note[/blue]: The first method (GHOSTINK environment variable) has higher priority than the --set-path option."
+            "\n[blue]Note[/blue]: The first method (GHOSTINK environment variable) has higher priority than the --set-path option.", soft_wrap=True
         )
         raise typer.Exit(code=1)
     if version:

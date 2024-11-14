@@ -23,7 +23,7 @@ def test_initialization():
     ink = GhostInk(title="TestTitle", project_root="test_root")
     assert ink.title == "TestTitle"
     assert ink.project_root == "test_root"
-    assert ink.etches == set()
+    assert ink.entries == set()
 
 
 def test_haunt(capsys):
@@ -35,23 +35,23 @@ def test_haunt(capsys):
 
 
 def test_inkdrop_basic(ghostink_instance):
-    ghostink_instance.inkdrop("Simple test etch")
-    assert any("Simple test etch" in etch[1]
-               for etch in ghostink_instance.etches)
+    ghostink_instance.inkdrop("Simple test entry")
+    assert any("Simple test entry" in entry[1]
+               for entry in ghostink_instance.entries)
 
 
 def test_inkdrop_dict_input(ghostink_instance):
     data = {"key": "value"}
     ghostink_instance.inkdrop(data)
     assert any(
-        "key" in etch[1] and "value" in etch[1] for etch in ghostink_instance.etches
+        "key" in entry[1] and "value" in entry[1] for entry in ghostink_instance.entries
     )
 
 
 def test_whisper(capsys, ghostink_instance):
     ghostink_instance.inkdrop("Debug message", shade=GhostInk.shade.DEBUG)
     ghostink_instance.inkdrop("Info message", shade=GhostInk.shade.INFO)
-    ghostink_instance.whisper(shade_mask=GhostInk.shade.DEBUG)
+    ghostink_instance.whisper(filter_shade=GhostInk.shade.DEBUG)
     captured = capsys.readouterr()
     assert "Debug message" in captured.out
     assert "Info message" not in captured.out
@@ -71,15 +71,15 @@ def test_get_relative_path(ghostink_instance):
     assert isinstance(func, str)
 
 
-def test_format_etch_from_object(ghostink_instance):
+def test_format_entry_from_object(ghostink_instance):
     # Test with dict
     dict_input = {"key": "value"}
-    formatted = ghostink_instance._format_etch_from_object(dict_input)
+    formatted = ghostink_instance._format_entry_from_object(dict_input)
     assert '"key": "value"' in formatted
 
     # Test with list
     list_input = [1, 2, 3]
-    formatted = ghostink_instance._format_etch_from_object(list_input)
+    formatted = ghostink_instance._format_entry_from_object(list_input)
     assert "[\n    1,\n    2,\n    3\n]" in formatted
 
     # Test with custom object
@@ -88,24 +88,24 @@ def test_format_etch_from_object(ghostink_instance):
             self.attr = "test"
 
     obj_input = CustomObj()
-    formatted = ghostink_instance._format_etch_from_object(obj_input)
+    formatted = ghostink_instance._format_entry_from_object(obj_input)
     assert '"attr": "test"' in formatted
 
 
-# def test_format_echoes(ghostink_instance):
-#     echoes = ["tag1", " tag2", "#tag3"]
-#     formatted = ghostink_instance._format_echoes(echoes)
+# def test_format_tags(ghostink_instance):
+#     tags = ["tag1", " tag2", "#tag3"]
+#     formatted = ghostink_instance._format_tags(tags)
 #     assert "#tag1" in formatted
 #     assert "#tag2" in formatted
 #     assert "#tag3" not in formatted  # Excludes tags with `#`
 
 
-def test_format_etch(ghostink_instance):
-    etch_text = "Sample Etch"
-    formatted = ghostink_instance._format_etch(
-        GhostInk.shade.INFO, etch_text, "file.py", 10, "test_func", ["tag"]
+def test_format_entry(ghostink_instance):
+    entry_text = "Sample entry"
+    formatted = ghostink_instance._format_entry(
+        GhostInk.shade.INFO, entry_text, "file.py", 10, "test_func", ["tag"]
     )
-    assert "Sample Etch" in formatted
+    assert "Sample entry" in formatted
     assert "file.py" in formatted
     assert "(Ln:" in formatted
     assert "tag" in formatted

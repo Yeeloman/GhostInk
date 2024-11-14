@@ -1,5 +1,7 @@
+import os
 import yaml
 import typer
+import subprocess
 from rich import pretty
 from pathlib import Path
 from typing import Optional
@@ -17,7 +19,7 @@ def create_todo_entry() -> None:
     todo_list_obj = None
     new_todo = {}
     todo_id = 1
-    console.rule("[bold red]TODO[/bold red]")
+    console.rule(f"[bold red]TODO[/bold red]:{FILE_PATH.name}")
     if FILE_PATH.exists():
         todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
         if todo_list_obj and "TODO" in todo_list_obj:
@@ -121,10 +123,17 @@ def todo(
         typer.Option(
             "--filename",
             "-f",
+            # prompt=True,
             show_default=None,
             help="The name of the file to process.",
         ),
     ],
+    edit_file: Annotated[Optional[bool], typer.Option(
+        "--edit-file",
+        "-e",
+        show_default=False,
+        help="edit the file using $EDITOR enviroment variable."
+    )] = False,
     new_entry: Annotated[
         Optional[bool],
         typer.Option(
@@ -160,7 +169,14 @@ def todo(
     ghost_path = ctx.obj.get("GHOST_PATH")
     FILE_PATH = Path(ghost_path) / f"{filename}.yml"
 
-    if delete >= 0:
+    if edit_file:
+        editor = os.getenv("EDITOR")
+        if editor:
+            subprocess.run([editor, FILE_PATH])
+        else:
+            subprocess.run(["vim", FILE_PATH])
+            
+    elif delete >= 0:
         delete_todo_entry(delete)
     elif delete_all:
         delete__all_todo_entries()

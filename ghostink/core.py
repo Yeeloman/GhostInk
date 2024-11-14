@@ -25,7 +25,7 @@ class GhostInk:
     class shade(Enum):
         """
         Defines an Enum class 'shade' with options:
-        - TODO: Represents a etch to be done.
+        - TODO: Represents a entry to be done.
         - DEBUG: Represents debug information.
         - INFO: Represents informational messages.
         - ERROR: Represents warning messages.
@@ -36,7 +36,7 @@ class GhostInk:
         DEBUG = "DEBUG"
         WARN = "WARN"
         ERROR = "ERROR"
-        _ECHO = "ECHO"  # only for internal use
+        _tag = "tag"  # only for internal use
 
     def get_shades(self):
         return self.shade
@@ -56,14 +56,14 @@ class GhostInk:
         Sets up a logger if logging to a file is enabled.
         """
         self.title = title
-        self.etches = set()
+        self.entries = set()
         self.project_root = project_root
 
         # alias the inkdrop/haunt method with just drop/ln
         self.drop = self.inkdrop
         self.ln = self.haunt
 
-        self._create_etch_dir()
+        self._create_entry_dir()
 
     def clean(self):
         ghost_path = Path(self.project_root) / ".ghost"
@@ -104,22 +104,22 @@ class GhostInk:
 
     def inkdrop(
         self,
-        etch_input: Union[str, None] = None,
+        entry_input: Union[str, None] = None,
         shade: Optional["GhostInk.shade"] = None,
-        echoes: Optional[List[str]] = None,
+        tags: Optional[List[str]] = None,
         filename: Optional[str] = None,
     ) -> None:
         if filename:
             file_path = Path(self.project_root) / ".ghost"/ f"{filename}.yml"
             try:
                 with open(file_path, "r") as file:
-                    etch_from_file = yaml.safe_load(file)
-                    for shade_file, etch_file in etch_from_file.items():
+                    entry_from_file = yaml.safe_load(file)
+                    for shade_file, entry_file in entry_from_file.items():
                         shade_cls = ShadeRegistry.get_shade_class(
                             self.shade[shade_file]
                         )
                         shade_instance = shade_cls(ghost_ink=self)
-                        shade_instance.dropper(etch_file)
+                        shade_instance.dropper(entry_file)
             except FileNotFoundError:
                 raise FileExistsError("The specified file do not exist")
         else:
@@ -127,59 +127,59 @@ class GhostInk:
                 shade = self.shade.TODO
             shade_cls = ShadeRegistry.get_shade_class(shade)
             shade_instance = shade_cls(ghost_ink=self)
-            shade_instance.inker(etch_input, shade, echoes)
+            shade_instance.inker(entry_input, shade, tags)
 
     def whisper(
         self,
-        shade_mask: str = None,
-        file_mask: str = None,
-        echo_mask: Optional[List[str]] = None,
+        filter_shade: str = None,
+        filter_file: str = None,
+        filter_tag: Optional[List[str]] = None,
     ) -> None:
         """
-        Prints filtered and sorted etchs based on the provided shade_mask and file_mask.
+        Prints filtered and sorted entrys based on the provided filter_shade and filter_file.
 
         Parameters:
-        - shade_mask (GhostInk.shade): The shade to filter etchs by (default: None).
-        - file_mask (str): The filename to filter etchs by (default: None).
+        - filter_shade (GhostInk.shade): The shade to filter entrys by (default: None).
+        - filter_file (str): The filename to filter entrys by (default: None).
         """
         # Display Title
         console.print(f"""\n{self.title}""", style="bold bright_cyan")
-        filtered_etches = self.etches.copy()  # Start with all etches
+        filtered_entries = self.entries.copy()  # Start with all entries
 
-        # If no masks are provided, print all etches
-        if shade_mask is None and file_mask is None and echo_mask is None:
-            filtered_etches = sorted(filtered_etches, key=lambda x: x[0].value)
+        # If no masks are provided, print all entries
+        if filter_shade is None and filter_file is None and filter_tag is None:
+            filtered_entries = sorted(filtered_entries, key=lambda x: x[0].value)
         else:
             # Apply filtering
-            if shade_mask:
-                filtered_etches = {
-                    etch for etch in filtered_etches if etch[0] == shade_mask
+            if filter_shade:
+                filtered_entries = {
+                    entry for entry in filtered_entries if entry[0] == filter_shade
                 }
 
             # Filter by file
-            if file_mask:
-                filtered_etches = {
-                    etch for etch in filtered_etches if etch[2] == file_mask
+            if filter_file:
+                filtered_entries = {
+                    entry for entry in filtered_entries if entry[2] == filter_file
                 }
 
-            # Filter by echoes
-            if echo_mask:
+            # Filter by tags
+            if filter_tag:
                 shade_cls = ShadeRegistry.get_shade_class(self.shade.TODO)
                 shade_instance = shade_cls(ghost_ink=self)
-                formatted_echoes = shade_instance._format_echoes(echoes=echo_mask)
-                filtered_etches = {
-                    etch
-                    for etch in filtered_etches
-                    if any(echo in etch[5] for echo in formatted_echoes)
+                formatted_tags = shade_instance._format_tags(tags=filter_tag)
+                filtered_entries = {
+                    entry
+                    for entry in filtered_entries
+                    if any(tag in entry[5] for tag in formatted_tags)
                 }
 
-        sorted_etches = sorted(filtered_etches, key=lambda x: x[0].value)
+        sorted_entries = sorted(filtered_entries, key=lambda x: x[0].value)
 
-        # Print etchs
-        for etch_shade, etch, file, line, func, echoes in sorted_etches:
+        # Print entrys
+        for entry_shade, entry, file, line, func, tags in sorted_entries:
             newline = Text("\n")
             newline.append(
-                self._format_etch(etch_shade, etch, file, line, func, echoes)
+                self._format_entry(entry_shade, entry, file, line, func, tags)
             )
             console.print(newline)
         # Caller information
@@ -194,7 +194,7 @@ class GhostInk:
         console.print(text)
 
         console.print(
-            f"Review completed etchs and remove them as necessary.\n",
+            f"Review completed entrys and remove them as necessary.\n",
             style="bright_red",
         )
 
@@ -256,7 +256,7 @@ class GhostInk:
             self.shade.WARN: "red",
             self.shade.ERROR: "bold red",
             # todo shuffle again if fr and bg are the same
-            self.shade._ECHO: f"{random.choice(foreground_colors)} on {random.choice(background_colors)}",
+            self.shade._tag: f"{random.choice(foreground_colors)} on {random.choice(background_colors)}",
         }
 
         # Choose the style for the shade
@@ -276,67 +276,67 @@ class GhostInk:
         relative_path = os.path.relpath(full_path, start=self.project_root)
         return relative_path, caller_frame.lineno, caller_frame.function
 
-    def _format_etch_from_object(self, etch_input: any) -> str:
+    def _format_entry_from_object(self, entry_input: any) -> str:
         """
         Convert a dictionary or object to a string
-        representation suitable for a etch.
+        representation suitable for a entry.
 
         Parameters:
-        - etch_input (dict or object): The input to format.
+        - entry_input (dict or object): The input to format.
 
         Returns:
-        - str: A formatted string representing the etch.
+        - str: A formatted string representing the entry.
         """
-        if isinstance(etch_input, (dict, list, tuple)):
-            return json.dumps(etch_input, indent=4)
-        elif isinstance(etch_input, set):
-            return json.dumps(list(etch_input), indent=4)
-        elif isinstance(etch_input, str):
-            return etch_input
-        elif hasattr(etch_input, "__dict__"):
-            return json.dumps(etch_input.__dict__, indent=4)
+        if isinstance(entry_input, (dict, list, tuple)):
+            return json.dumps(entry_input, indent=4)
+        elif isinstance(entry_input, set):
+            return json.dumps(list(entry_input), indent=4)
+        elif isinstance(entry_input, str):
+            return entry_input
+        elif hasattr(entry_input, "__dict__"):
+            return json.dumps(entry_input.__dict__, indent=4)
         else:
-            etch_str = str(etch_input)
-            return f"{etch_str}"
+            entry_str = str(entry_input)
+            return f"{entry_str}"
 
-    def _format_etch(self, etch_shade, etch, file, line, func, echoes):
+    def _format_entry(self, entry_shade, entry, file, line, func, tags):
         """
         Formats a task for printing.
 
         Parameters:
-        - etch (tuple): The task tuple to format.
+        - entry (tuple): The task tuple to format.
 
         Returns:
         - str: The formatted string.
         """
         filename = file.split("/")[-1]
         path = "/".join(file.split("/")[:-1])
-        colored_filename = self._color_text(etch_shade, filename)
-        colored_shade = self._color_text(etch_shade)
-        if echoes:
-            colored_echoes = Text("")
-            for echo in echoes:
-                colored_echoes.append(" ")
-                colored_echoes.append(
-                    self._color_text(self.shade._ECHO, " " + echo + " ")
+        colored_filename = self._color_text(entry_shade, filename)
+        colored_shade = self._color_text(entry_shade)
+        if tags:
+            colored_tags = Text("")
+            for tag in tags:
+                colored_tags.append(" ")
+                colored_tags.append(
+                    self._color_text(self.shade._tag, " " + tag + " ")
                 )
-            colored_echoes.append("\n")
+            colored_tags.append("\n")
 
         else:
-            colored_echoes = Text("")
-        colored_line_nb = self._color_text(etch_shade, str(line))
+            colored_tags = Text("")
+        colored_line_nb = self._color_text(entry_shade, str(line))
         output = Text(f"[")
         output.append(colored_shade)
-        output.append(f"] {etch}\n")
-        output.append(colored_echoes)
+        output.append(f"] {entry}\n")
+        output.append(colored_tags)
         output.append(f"(Ln:")
         output.append(colored_line_nb)
         output.append(f" - {func} in {path}")
         output.append(colored_filename)
         return output
 
-    def _create_etch_dir(self):
-        # sets up the dir where the logs and etches live
+    def _create_entry_dir(self):
+        # sets up the dir where the logs and entries live
         ghost_dir_path = os.path.join(self.project_root, ".ghost")
         os.makedirs(ghost_dir_path, exist_ok=True)
 
@@ -372,9 +372,9 @@ class ShadeRegistry:
     @classmethod
     def get_shade_class(cls, shade: GhostInk.shade):
         """Returns the corresponding class for a given shade Enum."""
-        if shade == GhostInk.shade._ECHO:
+        if shade == GhostInk.shade._tag:
             raise ValueError(
-                "Attempted to use shade '_ECHO', which is not allowed for etch addition."
+                "Attempted to use shade '_tag', which is not allowed for entry addition."
             )
         elif shade not in GhostInk.shade:
             raise ValueError("unvalid shade")

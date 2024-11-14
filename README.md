@@ -1,6 +1,6 @@
 # GhostInk
 
-**GhostInk** is a Python utility to streamline debugging and etch(task) tracking by printing detailed file information for each call. This tool eliminates the need to manually add `print` statements and hunt for line numbers or file names, providing an organized, colorful output to track etches, debug info, and errors across your project.
+**GhostInk** is a Python utility to streamline debugging and entry(task) tracking by printing detailed file information for each call. This tool eliminates the need to manually add `print` statements and hunt for line numbers or file names, providing an organized, colorful output to track entries, debug info, and errors across your project.
 
 ---
 
@@ -35,33 +35,33 @@ ink = GhostInk(
 )
 ```
 
-### Adding etches (tasks) with Shades
+### Adding entries (tasks) with Shades
 
-Add etches with `inkdrop`, assigning Shades such as `TODO`, `INFO`, `DEBUG`, `WARN`, or `ERROR`. Shades allow you to manage and filter etches effectively.
+Add entries with `inkdrop`, assigning Shades such as `TODO`, `INFO`, `DEBUG`, `WARN`, or `ERROR`. Shades allow you to manage and filter entries effectively.
 
 ```python
 ink.inkdrop("Refactor this method", Shade=GhostInk.Shade.TODO)
 # inkdrop can be aliased to just drop
-ink.drop("This is debug info", Shade=GhostInk.Shade.DEBUG, echoes=["database"])
+ink.drop("This is debug info", Shade=GhostInk.Shade.DEBUG, tags=["database"])
 ```
 
 ### Printing Location Information with `haunt`
 
-If you simply want to print the current file location (file, line, function, and timestamp) without adding a etch, use `haunt`:
+If you simply want to print the current file location (file, line, function, and timestamp) without adding a entry, use `haunt`:
 
 ```python
 # can be aliased to ink.ln()
 ink.haunt("Executing important operation")
 ```
 
-### Viewing and Filtering etches with `whisper`
+### Viewing and Filtering entries with `whisper`
 
-View all tracked etches using `whisper`, with optional filters by Shade or file name:
+View all tracked entries using `whisper`, with optional filters by Shade or file name:
 
 ```python
-ink.whisper(shade_mask=GhostInk.Shade.TODO)
-ink.whisper(file_mask="main.py")
-ink.whisper(echo_mask=["database"])
+ink.whisper(filter_shade=GhostInk.Shade.TODO)
+ink.whisper(filter_file="main.py")
+ink.whisper(filter_tag=["database"])
 ```
 
 ---
@@ -73,19 +73,19 @@ ink.whisper(echo_mask=["database"])
    - **Parameters**:
      - `msg`: Optional message displayed before the file information.
 
-2. **`inkdrop(etch_input: any, Shade: Shade = Shade.TODO, echoes: List[str] = [])`**  
-   - Adds a etch with text and a specific Shade to the etch list.
+2. **`inkdrop(entry_input: any, Shade: Shade = Shade.TODO, tags: List[str] = [])`**  
+   - Adds a entry with text and a specific Shade to the entry list.
    - **Parameters**:
-     - `etch_input`: Text, dictionary, or object to record as a etch.
-     - `Shade`: etch Shade (TODO, INFO, DEBUG, WARN, ERROR).
-     - `echoes`: Tags for the task
+     - `entry_input`: Text, dictionary, or object to record as a entry.
+     - `Shade`: entry Shade (TODO, INFO, DEBUG, WARN, ERROR).
+     - `tags`: Tags for the task
 
-3. **`whisper(shade_mask: str = None, file_mask: str = None, echo_mask: List[str] = None)`**  
-   - Prints filtered etches based on Shade and filename.
+3. **`whisper(filter_shade: str = None, filter_file: str = None, filter_tag: List[str] = None)`**  
+   - Prints filtered entries based on Shade and filename.
    - **Parameters**:
-     - `shade_mask`: Filter etches by Shade.
-     - `file_mask`: Filter etches by specific file name.
-     - `echo_mask`: Filter etches by specific echo (Tag)
+     - `filter_shade`: Filter entries by Shade.
+     - `filter_file`: Filter entries by specific file name.
+     - `filter_tag`: Filter entries by specific tag (Tag)
 4. `get_shades(self):`
   - return all the shades
 
@@ -98,13 +98,13 @@ from ghostink import GhostInk
 
 ink = GhostInk(title="Project Debugger")
 ink.drop("Fix memory leak", shade=GhostInk.Shade.WARN,
-         echoes=['leaks', 'memory'])
+         tags=['leaks', 'memory'])
 shades = ink.get_shades()
 ink.drop("Checkpoint reached", shade=shades.INFO)
 ink.drop("this is an importatnt TODO note DO NOT IGNORE")
 
 
-ink.whisper(echo_mask=['memory'])
+ink.whisper(filter_tag=['memory'])
 
 ink.haunt('just another line')
 
@@ -126,7 +126,7 @@ Stack Trace:
 (Ln:4 - <module> in ghostink/main.py)
 
 Printed from: ghostink/main.py at line 13
-Review completed etchs and remove them as necessary.
+Review completed entrys and remove them as necessary.
 
 just another line
 └── main.py:15 in <module>() at 03:50:40``
@@ -156,13 +156,13 @@ def buster():
 ## Benefits
 
 - No more manually adding and searching for `print` statements!
-- Clearly organized, color-coded outputs make etches easy to spot and review.
+- Clearly organized, color-coded outputs make entries easy to spot and review.
 - Optional file logging to retain records and analyze later.
-- Filters for viewing etches by file and Shade allow better focus and etch management.
+- Filters for viewing entries by file and Shade allow better focus and entry management.
 
 ---
 
-**Start using GhostInk** and turn your debug prints into an organized, colorful log. Perfect for developers who want a better way to keep track of etches and debug information without losing context!
+**Start using GhostInk** and turn your debug prints into an organized, colorful log. Perfect for developers who want a better way to keep track of entries and debug information without losing context!
 
 ---
 
