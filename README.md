@@ -171,6 +171,11 @@ def buster():
 This project is inspired by the [icecream](https://github.com/gruns/icecream) library.
 
 ---
+## GhostInk in other languages
+
+  - Go: [GhostInk](https://github.com/Yandelf00/GhostInk.git)
+
+---
 
 ## Contributing
 
