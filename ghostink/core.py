@@ -57,7 +57,8 @@ class GhostInk:
         """
         self.title = title
         self.entries = set()
-        self.project_root = project_root
+        self.project_root = os.getenv('GHOSTINK') or project_root
+        self.Group = Path(self.project_root) / ".ghost" / self.title
 
         # alias the inkdrop/haunt method with just drop/ln
         self.drop = self.inkdrop
@@ -110,16 +111,16 @@ class GhostInk:
         filename: Optional[str] = None,
     ) -> None:
         if filename:
-            file_path = Path(self.project_root) / ".ghost"/ f"{filename}.yml"
+            file_path = self.Group / f"{filename}.yml"
             try:
-                with open(file_path, "r") as file:
-                    entry_from_file = yaml.safe_load(file)
-                    for shade_file, entry_file in entry_from_file.items():
+                with file_path.open("r") as file:
+                    entries_from_file = yaml.safe_load(file)
+                    for shade_from_file, entry_from_file in entries_from_file.items():
                         shade_cls = ShadeRegistry.get_shade_class(
-                            self.shade[shade_file]
+                            self.shade[shade_from_file]
                         )
                         shade_instance = shade_cls(ghost_ink=self)
-                        shade_instance.dropper(entry_file)
+                        shade_instance.dropper(entry_from_file)
             except FileNotFoundError:
                 raise FileExistsError("The specified file do not exist")
         else:
@@ -143,7 +144,7 @@ class GhostInk:
         - filter_file (str): The filename to filter entrys by (default: None).
         """
         # Display Title
-        console.print(f"""\n{self.title}""", style="bold bright_cyan")
+        console.rule(f"""{self.title}""", style="bold bright_cyan")
         filtered_entries = self.entries.copy()  # Start with all entries
 
         # If no masks are provided, print all entries
@@ -317,9 +318,7 @@ class GhostInk:
             colored_tags = Text("")
             for tag in tags:
                 colored_tags.append(" ")
-                colored_tags.append(
-                    self._color_text(self.shade._tag, " " + tag + " ")
-                )
+                colored_tags.append(self._color_text(self.shade._tag, " " + tag + " "))
             colored_tags.append("\n")
 
         else:
@@ -337,26 +336,27 @@ class GhostInk:
 
     def _create_entry_dir(self):
         # sets up the dir where the logs and entries live
-        ghost_dir_path = os.path.join(self.project_root, ".ghost")
-        os.makedirs(ghost_dir_path, exist_ok=True)
+        ghost_dir_path = self.Group
+        ghost_dir_path.mkdir(parents=True, exist_ok=True)
 
-        example_path = os.path.join(ghost_dir_path, "example.yml")
+        example_path = ghost_dir_path / "example.yml"
         content = {
             "TODO": [
                 {
                     "title": "Title of the main task",
                     "description": "Detailed description of the task",
                     "priority": "High",  # Low, Medium
+                    "status": "Pending",
+                    "tags": ["tag1", "tag2"],
                     "subtasks": [
-                        {"name": "Subtask 1", "status": "Pending"},  # completed
-                        {"name": "Subtask 2", "status": "In-progress"},
-                        {"name": "Subtask 2", "status": "Completed"},
+                        {"title": "Subtask 1", "status": "Pending"},  # completed
+                        {"title": "Subtask 2", "status": "Completed"},
                     ],
                 }
             ]
         }
-        with open(example_path, "w") as file:
-            yaml.dump(content, file)
+        with example_path.open("w") as file:
+            yaml.dump(content, file, sort_keys=False)
 
 
 class ShadeRegistry:

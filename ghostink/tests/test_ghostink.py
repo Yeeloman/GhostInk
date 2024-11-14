@@ -13,14 +13,32 @@ def ghostink_instance():
 @pytest.fixture(scope="function", autouse=True)
 def clean_up_logs():
     yield
-    if os.path.exists("test_project/.ghost"):
-        for file in os.listdir("test_project/.ghost"):
-            os.remove(os.path.join("test_project/.ghost", file))
-        os.rmdir("test_project/.ghost")
+    if os.path.exists("test_project/.ghost/TestInstance"):
+        for file in os.listdir("test_project/.ghost/TestInstance"):
+            os.remove(os.path.join("test_project/.ghost/TestInstance", file))
+        os.rmdir("test_project/.ghost/TestInstance")
 
 
-def test_initialization():
+@pytest.fixture
+def setup_env(monkeypatch):
+    # Clear the GHOSTINK environment variable to test default behavior
+    monkeypatch.delenv("GHOSTINK", raising=False)
+
+
+def test_initialization_with_env_var(monkeypatch):
+    # Set GHOSTINK to a custom value
+    monkeypatch.setenv("GHOSTINK", ".")
+    ink = GhostInk(title="TestTitle", project_root="ignored_root")
+
+    assert ink.title == "TestTitle"
+    assert ink.project_root == "."
+    assert ink.entries == set()
+
+
+def test_initialization_without_env_var(setup_env):
+    # Without GHOSTINK, it should use the provided project_root
     ink = GhostInk(title="TestTitle", project_root="test_root")
+
     assert ink.title == "TestTitle"
     assert ink.project_root == "test_root"
     assert ink.entries == set()
@@ -36,8 +54,7 @@ def test_haunt(capsys):
 
 def test_inkdrop_basic(ghostink_instance):
     ghostink_instance.inkdrop("Simple test entry")
-    assert any("Simple test entry" in entry[1]
-               for entry in ghostink_instance.entries)
+    assert any("Simple test entry" in entry[1] for entry in ghostink_instance.entries)
 
 
 def test_inkdrop_dict_input(ghostink_instance):

@@ -30,10 +30,10 @@ To start, create a `GhostInk` instance with optional parameters:
 ink = GhostInk(
     title="My Project Debugger",
     project_root=".",         # Set the project root for relative path display
-    log_to_file=True,         # Enable/disable logging to a file
-    log_file="debug.log"      # Specify log file name if logging is enabled
 )
 ```
+
+The environment variable `GHOSTINK` takes precedence over directly passing `project_root` argument during initialization.
 
 ### Adding entries (tasks) with Shades
 
@@ -87,7 +87,8 @@ ink.whisper(filter_tag=["database"])
      - `filter_file`: Filter entries by specific file name.
      - `filter_tag`: Filter entries by specific tag (Tag)
 4. `get_shades(self):`
-  - return all the shades
+
+- return all the shades
 
 ---
 
@@ -133,9 +134,11 @@ just another line
 ```
 
 ---
+
 ## An import trick
 
- - to make `GhostInk` available in all file projects without the import statements, you can use `ghostall()`.
+- to make `GhostInk` available in all file projects without the import statements, you can use `ghostall()`.
+
 ```python
 # in a parentfile
 from ghostink import ghostall
@@ -144,13 +147,15 @@ ghostall()
 
 buster()
 ```
+
 ```python
 # in a subfile
 def buster():
   ink = GhostInk()
   ink.drop('now it work like a builtin function')
   ink.whisper()
-``` 
+```
+
 ---
 
 ## Benefits
@@ -171,9 +176,10 @@ def buster():
 This project is inspired by the [icecream](https://github.com/gruns/icecream) library.
 
 ---
+
 ## GhostInk in other languages
 
-  - Go: [GhostInk](https://github.com/Yandelf00/GhostInk.git)
+- Go: [GhostInk](https://github.com/Yandelf00/GhostInk.git)
 
 ---
 

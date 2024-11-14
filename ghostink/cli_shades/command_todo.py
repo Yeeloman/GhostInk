@@ -165,7 +165,7 @@ def todo(
     ] = False,
 ):
     """
-    Manage to-do entries within a YAML file.(Alias: "t")
+    Manage to-do entries within a YAML file. (Alias: t)
     """
     global FILE_PATH
 

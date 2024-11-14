@@ -63,7 +63,6 @@ def ghosty(
         typer.Option(
             "--show-path",
             "-P",
-            is_eager=True,
             help="Show the .ghost directory path.",
         ),
     ] = None,
@@ -78,6 +77,13 @@ def ghosty(
             help="Set the project path.",
         ),
     ] = PROJECT_PATH,
+    group: Annotated[
+        Optional[str], typer.Option(
+            "--grp",
+            "-g",
+            help="Specify the title for the GhostInk CLS instance to sync with."
+        )
+    ] = "GhostInk",
     version: Annotated[
         Optional[bool],
         typer.Option(
@@ -99,7 +105,7 @@ def ghosty(
     if project_root:
         PROJECT_PATH = project_root.expanduser().resolve()
         save_project_path(PROJECT_PATH)
-        GHOST_PATH = os.path.join(PROJECT_PATH, ".ghost")
+        GHOST_PATH = os.path.join(PROJECT_PATH, ".ghost", group)
 
     if not PROJECT_PATH:
         console.print(
@@ -116,7 +122,7 @@ def ghosty(
         console.print(f".ghost dir in: {GHOST_PATH}")
         raise typer.Exit()
     ctx.obj = {"GHOST_PATH": GHOST_PATH}
-    Path(GHOST_PATH).mkdir(exist_ok=True)
+    Path(GHOST_PATH).mkdir(parents=True, exist_ok=True)
 
 
 # adding the subcommands
