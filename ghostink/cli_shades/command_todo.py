@@ -105,8 +105,7 @@ def delete__all_todo_entries() -> None:
         console.print("Deletion canceled.")
         return
 
-
-    with console.status('deleting all entries...', spinner="dots2"):
+    with console.status("deleting all entries...", spinner="dots2"):
         todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
         if todo_list_obj and "TODO" in todo_list_obj:
             todo_list_obj.pop("TODO")
@@ -128,12 +127,15 @@ def todo(
             help="The name of the file to process.",
         ),
     ],
-    edit_file: Annotated[Optional[bool], typer.Option(
-        "--edit-file",
-        "-e",
-        show_default=False,
-        help="edit the file using $EDITOR enviroment variable."
-    )] = False,
+    edit_file: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--edit-file",
+            "-e",
+            show_default=False,
+            help="edit the file using $EDITOR enviroment variable.",
+        ),
+    ] = False,
     new_entry: Annotated[
         Optional[bool],
         typer.Option(
@@ -147,10 +149,11 @@ def todo(
         typer.Option(
             "--delete",
             "-d",
+            min=1,
             show_default=False,
-            help="delete a todo entry in the specified file",
+            help="delete a todo entry based on the id passed",
         ),
-    ] = -1,
+    ] = 0,
     delete_all: Annotated[
         Optional[bool],
         typer.Option(
@@ -175,8 +178,7 @@ def todo(
             subprocess.run([editor, FILE_PATH])
         else:
             subprocess.run(["vim", FILE_PATH])
-            
-    elif delete >= 0:
+    elif delete > 0:
         delete_todo_entry(delete)
     elif delete_all:
         delete__all_todo_entries()
