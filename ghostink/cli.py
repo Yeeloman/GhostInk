@@ -117,22 +117,12 @@ def ghosty(
 
 
 # adding the subcommands
-app.command("todo", help="Everything related to Todo shade in ghostink")(
-    command_todo.todo
-)
-app.command("t", help="Alias of todo")(command_todo.todo)
-app.command("info", help="Everything related to Info shade in ghostink")(
-    command_info.info_command
-)
-app.command("debug", help="Everything related to Debug shade in ghostink")(
-    command_debug.debug_command
-)
-app.command("warn", help="Everything related to Warn shade in ghostink")(
-    command_warn.warn_command
-)
-app.command("error", help="Everything related to Error shade in ghostink")(
-    command_error.error_command
-)
+app.command("todo")(command_todo.todo)
+app.command("t", hidden=True)(command_todo.todo)
+# app.command("info")(command_info.info_command)
+# app.command("debug")(command_debug.debug_command)
+# app.command("warn")(command_warn.warn_command)
+# app.command("error")(command_error.error_command)
 
 if __name__ == "__main__":
     app()

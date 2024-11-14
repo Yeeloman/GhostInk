@@ -17,10 +17,10 @@ def create_todo_entry() -> None:
     todo_list_obj = None
     new_todo = {}
     todo_id = 1
-
+    console.rule("[bold red]TODO[/bold red]")
     if FILE_PATH.exists():
         todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
-        if todo_list_obj:
+        if todo_list_obj and "TODO" in todo_list_obj:
             todo_id = len(todo_list_obj["TODO"]) + 1
         else:
             todo_list_obj = {"TODO": []}
@@ -95,19 +95,23 @@ def delete__all_todo_entries() -> None:
     if not FILE_PATH.exists():
         console.print("The specified file does not exist.")
         return
-    
-    confirm_delete = Confirm.ask('Are you sure you want to delete all TODO entries?', default=False)
+
+    confirm_delete = Confirm.ask(
+        "Are you sure you want to delete all TODO entries?", default=False
+    )
     if not confirm_delete:
-        console.print('Deletion canceled.')
+        console.print("Deletion canceled.")
         return
-    
-    todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
-    if todo_list_obj and "TODO" in todo_list_obj:
-        todo_list_obj.pop('TODO')
-        todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
-        FILE_PATH.write_text(todo_yml)
-    else:
-        console.print("No TODOs found in the file.")
+
+
+    with console.status('deleting all entries...', spinner="dots2"):
+        todo_list_obj = yaml.safe_load(FILE_PATH.open("r"))
+        if todo_list_obj and "TODO" in todo_list_obj:
+            todo_list_obj.pop("TODO")
+            todo_yml = yaml.dump(todo_list_obj, sort_keys=False)
+            FILE_PATH.write_text(todo_yml)
+        else:
+            console.print("No TODOs found in the file.")
 
 
 def todo(
@@ -134,6 +138,7 @@ def todo(
         typer.Option(
             "--delete",
             "-d",
+            show_default=False,
             help="delete a todo entry in the specified file",
         ),
     ] = -1,
@@ -142,10 +147,14 @@ def todo(
         typer.Option(
             "--delete-all",
             "-D",
+            show_default=False,
             help="delete all todo entries in the specified file",
         ),
     ] = False,
 ):
+    """
+    Manage to-do entries within a YAML file.(Alias: "t")
+    """
     global FILE_PATH
 
     ghost_path = ctx.obj.get("GHOST_PATH")
