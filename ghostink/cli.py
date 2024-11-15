@@ -3,6 +3,7 @@ import os
 import typer
 from rich import pretty
 from pathlib import Path
+from rich.text import Text
 from typing import Optional
 from rich.console import Console
 from typing_extensions import Annotated
@@ -78,12 +79,19 @@ def ghosty(
         ),
     ] = PROJECT_PATH,
     group: Annotated[
-        Optional[str], typer.Option(
+        Optional[str],
+        typer.Option(
             "--grp",
             "-g",
-            help="Specify the title for the GhostInk CLS instance to sync with."
-        )
+            help="Specify the title for the GhostInk CLS instance to sync with.",
+        ),
     ] = "GhostInk",
+    list_files: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--list", "-l", show_default=False, help="List all the files in a group."
+        ),
+    ] = False,
     version: Annotated[
         Optional[bool],
         typer.Option(
@@ -105,7 +113,7 @@ def ghosty(
     if project_root:
         PROJECT_PATH = project_root.expanduser().resolve()
         save_project_path(PROJECT_PATH)
-        GHOST_PATH = os.path.join(PROJECT_PATH, ".ghost", group)
+        GHOST_PATH = Path(PROJECT_PATH) / ".ghost" / group
 
     if not PROJECT_PATH:
         console.print(
@@ -113,16 +121,27 @@ def ghosty(
             "Please set the path using one of the following methods:\n"
             '1. Export the GHOSTINK variable: [bold]export GHOSTINK="~/path/to/project_root"[/bold]\n'
             "2. Use the [bold]--set-path[/bold] option to set it for this session: [bold]ghosty --set-path ~/path/to/project_root[/bold]"
-            "\n[blue]Note[/blue]: The first method (GHOSTINK environment variable) has higher priority than the --set-path option.", soft_wrap=True
+            "\n[blue]Note[/blue]: The first method (GHOSTINK environment variable) has higher priority than the --set-path option.",
+            soft_wrap=True,
         )
         raise typer.Exit(code=1)
     if version:
+        raise typer.Exit()
+    if list_files:
+        files = [f for f in GHOST_PATH.glob("*")]
+        file_list = Text("")
+        out_str = " ".join(f.name for f in files)
+        file_list.append(out_str)
+        if not file_list:
+            console.print("No files under the current Group", style="bold bright_red")
+        else:
+            console.print(file_list)
         raise typer.Exit()
     if show_path:
         console.print(f".ghost dir in: {GHOST_PATH}")
         raise typer.Exit()
     ctx.obj = {"GHOST_PATH": GHOST_PATH}
-    Path(GHOST_PATH).mkdir(parents=True, exist_ok=True)
+    GHOST_PATH.mkdir(parents=True, exist_ok=True)
 
 
 # adding the subcommands

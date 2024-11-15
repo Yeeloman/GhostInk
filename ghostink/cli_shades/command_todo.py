@@ -170,7 +170,7 @@ def todo(
     global FILE_PATH
 
     ghost_path = ctx.obj.get("GHOST_PATH")
-    FILE_PATH = Path(ghost_path) / f"{filename}.yml"
+    FILE_PATH = ghost_path / f"{filename}.yml"
 
     if edit_file:
         editor = os.getenv("EDITOR")
