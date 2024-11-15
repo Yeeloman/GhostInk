@@ -127,7 +127,7 @@ Stack Trace:
 (Ln:4 - <module> in ghostink/main.py)
 
 Printed from: ghostink/main.py at line 13
-Review completed entrys and remove them as necessary.
+Review completed entries and remove them as necessary.
 
 just another line
 └── main.py:15 in <module>() at 03:50:40``

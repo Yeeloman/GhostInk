@@ -4,7 +4,7 @@ from rich import pretty
 pretty.install()
 
 
-class Baseentry:
+class BaseEntry:
     def __init__(self, ghost_ink):
         self.ghost_ink = ghost_ink
 

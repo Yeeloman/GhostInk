@@ -57,7 +57,7 @@ class GhostInk:
         """
         self.title = title
         self.entries = set()
-        self.project_root = os.getenv('GHOSTINK') or project_root
+        self.project_root = os.getenv("GHOSTINK") or project_root
         self.Group = Path(self.project_root) / ".ghost" / self.title
 
         # alias the inkdrop/haunt method with just drop/ln
@@ -105,7 +105,7 @@ class GhostInk:
 
     def inkdrop(
         self,
-        entry_input: Union[str, None] = None,
+        entry_input: Union[str, None] = "Note: This is only the default message.",
         shade: Optional["GhostInk.shade"] = None,
         tags: Optional[List[str]] = None,
         filename: Optional[str] = None,
@@ -137,11 +137,11 @@ class GhostInk:
         filter_tag: Optional[List[str]] = None,
     ) -> None:
         """
-        Prints filtered and sorted entrys based on the provided filter_shade and filter_file.
+        Prints filtered and sorted entries based on the provided filter_shade and filter_file.
 
         Parameters:
-        - filter_shade (GhostInk.shade): The shade to filter entrys by (default: None).
-        - filter_file (str): The filename to filter entrys by (default: None).
+        - filter_shade (GhostInk.shade): The shade to filter entries by (default: None).
+        - filter_file (str): The filename to filter entries by (default: None).
         """
         # Display Title
         console.rule(f"""{self.title}""", style="bold bright_cyan")
@@ -176,13 +176,17 @@ class GhostInk:
 
         sorted_entries = sorted(filtered_entries, key=lambda x: x[0].value)
 
-        # Print entrys
+        # Print entries
         for entry_shade, entry, file, line, func, tags in sorted_entries:
             newline = Text("\n")
             newline.append(
                 self._format_entry(entry_shade, entry, file, line, func, tags)
             )
             console.print(newline)
+        
+        self.footer()
+
+    def footer(self):
         # Caller information
         caller_frame = inspect.stack()[1]
         caller_file = os.path.relpath(caller_frame.filename, start=self.project_root)
@@ -192,11 +196,10 @@ class GhostInk:
         text.append(caller_file, style="red")
         text.append(" at line ", style="none")
         text.append(str(caller_line), style="bold yellow")
-        console.print(text)
+        console.print(text, justify="center")
 
-        console.print(
-            f"Review completed entrys and remove them as necessary.\n",
-            style="bright_red",
+        console.rule(
+            f"[bold bright_red]Review completed entries and remove them as necessary.[/bold bright_red]",
         )
 
     def _color_text(self, shade: shade, text: str = "") -> None:
@@ -343,6 +346,7 @@ class GhostInk:
         content = {
             "TODO": [
                 {
+                    "id": 1,
                     "title": "Title of the main task",
                     "description": "Detailed description of the task",
                     "priority": "High",  # Low, Medium
@@ -352,8 +356,23 @@ class GhostInk:
                         {"title": "Subtask 1", "status": "Pending"},  # completed
                         {"title": "Subtask 2", "status": "Completed"},
                     ],
+                },
+                {
+                    "id": 2,
+                    "title": "Title of the secondary task",
+                    "description": "Detailed description of the task",
+                    "priority": "Medium",  # Low, Medium
+                    "status": "Completed",
+                    "tags": [],
+                },
+            ],
+            "ERROR": [
+                {
+                    "id": 1,
+                    "title": "this is error task",
+                    "description": "the detailed desc",
                 }
-            ]
+            ],
         }
         with example_path.open("w") as file:
             yaml.dump(content, file, sort_keys=False)
