@@ -89,7 +89,7 @@ def ghosty(
     list_files: Annotated[
         Optional[bool],
         typer.Option(
-            "--list", "-l", show_default=False, help="List all the files in a group."
+            "--list", "-l", show_default=False, help="List all the entries in a group."
         ),
     ] = False,
     version: Annotated[
@@ -133,7 +133,7 @@ def ghosty(
         out_str = " ".join(f.name for f in files)
         file_list.append(out_str)
         if not file_list:
-            console.print("No files under the current Group", style="bold bright_red")
+            console.print("No entries under the current Group", style="bold bright_red")
         else:
             console.print(file_list)
         raise typer.Exit()
