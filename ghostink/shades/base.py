@@ -5,6 +5,27 @@ pretty.install()
 
 
 class BaseEntry:
+    class ColorMapper:
+        """Subclass for mapping values to ANSI color escape sequences."""
+
+        # Mapping of values to ANSI escape codes
+        COLOR_MAP = {
+            "Pending": "\033[1;33m",   # Yellow
+            "Completed": "\033[1;32m", # Green
+            "Low": "\033[1;34m",       # Blue
+            "Medium": "\033[1;36m",    # Cyan
+            "High": "\033[1;31m",      # Red
+
+            "title": "\033[1;95m"
+        }
+
+        RESET = "\033[0m"
+
+        @classmethod
+        def get_color(cls, value: str) -> str:
+            """Return the ANSI escape sequence for the given value."""
+            return cls.COLOR_MAP.get(value, cls.RESET)
+
     def __init__(self, ghost_ink):
         self.ghost_ink = ghost_ink
 

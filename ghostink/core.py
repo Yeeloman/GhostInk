@@ -134,7 +134,7 @@ class GhostInk:
         self,
         filter_shade: str = None,
         filter_file: str = None,
-        filter_tag: Optional[List[str]] = None,
+        filter_tag: Optional[List[str]] | str = None,
     ) -> None:
         """
         Prints filtered and sorted entries based on the provided filter_shade and filter_file.
@@ -143,6 +143,10 @@ class GhostInk:
         - filter_shade (GhostInk.shade): The shade to filter entries by (default: None).
         - filter_file (str): The filename to filter entries by (default: None).
         """
+        # change the tag to a list for process
+        if isinstance(filter_tag, str):
+            filter_tag = [filter_tag]
+
         # Display Title
         console.rule(f"""{self.title}""", style="bold bright_cyan")
         filtered_entries = self.entries.copy()  # Start with all entries
@@ -183,7 +187,7 @@ class GhostInk:
                 self._format_entry(entry_shade, entry, file, line, func, tags)
             )
             console.print(newline)
-        
+
         self.footer()
 
     def footer(self):
@@ -363,19 +367,33 @@ class GhostInk:
                     "description": "Detailed description of the task",
                     "priority": "Medium",  # Low, Medium
                     "status": "Completed",
-                    "tags": [],
+                    "tags": "another tag",
+                },
+                {
+                    "id": 3,
+                    "title": "Title of the third task",
+                    "description": "Detailed description of the task",
+                    "priority": "Low",  # Low, Medium
+                    "status": "Pending",
+                    "subtasks": [
+                        {"title": "Subtask 9651", "status": "Pending"},  # completed
+                        {"title": "Subtask 102", "status": "Completed"},
+                    ],
                 },
             ],
-            "ERROR": [
-                {
-                    "id": 1,
-                    "title": "this is error task",
-                    "description": "the detailed desc",
-                }
-            ],
+            # "ERROR": [
+            #     {
+            #         "id": 1,
+            #         "title": "this is error task",
+            #         "description": "the detailed desc",
+            #     }
+            # ],
         }
         with example_path.open("w") as file:
             yaml.dump(content, file, sort_keys=False)
+
+    def __str__(self):
+        return f"{self.title}: {len(self.entries)} entries"
 
 
 class ShadeRegistry:
