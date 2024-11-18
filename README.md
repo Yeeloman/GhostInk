@@ -29,7 +29,7 @@ To start, create a `GhostInk` instance with optional parameters:
 ```python
 ink = GhostInk(
     title="My Project Debugger",
-    project_root=".",         # Set the project root for relative path display
+    project_root=".",  # Set the project root for relative path display
 )
 ```
 
@@ -61,7 +61,7 @@ View all tracked entries using `whisper`, with optional filters by Shade or file
 ```python
 ink.whisper(filter_shade=GhostInk.Shade.TODO)
 ink.whisper(filter_file="main.py")
-ink.whisper(filter_tag=["database"])
+ink.whisper(filter_tag=["database"]) # str type can also be passed
 ```
 
 ---
@@ -73,22 +73,24 @@ ink.whisper(filter_tag=["database"])
    - **Parameters**:
      - `msg`: Optional message displayed before the file information.
 
-2. **`inkdrop(entry_input: any, Shade: Shade = Shade.TODO, tags: List[str] = [])`**  
-   - Adds a entry with text and a specific Shade to the entry list.
+2. **`inkdrop(entry_input: any, Shade: Shade = Shade.TODO, tags: List[str] = [], filename: str = None)`**
+   - Adds a entry with text and a specific Shade to the entry list, or load a more detailed entry from a file .
    - **Parameters**:
      - `entry_input`: Text, dictionary, or object to record as a entry.
      - `Shade`: entry Shade (TODO, INFO, DEBUG, WARN, ERROR).
      - `tags`: Tags for the task
+     - `filename`: The name of the file to load the entries from, the files are located in the *`project_root/.ghost/the title of the instance`*.
+   - Note: passing a filename takes precedence over the rest of parameters.
 
 3. **`whisper(filter_shade: str = None, filter_file: str = None, filter_tag: List[str] = None)`**  
    - Prints filtered entries based on Shade and filename.
    - **Parameters**:
      - `filter_shade`: Filter entries by Shade.
      - `filter_file`: Filter entries by specific file name.
-     - `filter_tag`: Filter entries by specific tag (Tag)
-4. `get_shades(self):`
+     - `filter_tag`: Filter entries by specific tag (Tag).
 
-- return all the shades
+4. **`get_shades(self):`**
+   - return all the shades
 
 ---
 
@@ -155,6 +157,10 @@ def buster():
   ink.drop('now it work like a builtin function')
   ink.whisper()
 ```
+
+---
+
+## **`Ghosty`** cli
 
 ---
 
