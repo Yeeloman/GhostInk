@@ -119,12 +119,6 @@ ink.haunt('just another line')
    Project Debugger
 
 [WARN] Fix memory leak
-Stack Trace:
-  File "/home/yeeloman/Documents/GitHub/GhostInk_project/ghostink/main.py", line 4, in <module>
-    ink.drop("Fix memory leak", shade=GhostInk.Shade.WARN,
-  File "/home/yeeloman/Documents/GitHub/GhostInk_project/ghostink/ghostink.py", line 137, in inkdrop
-    stack_trace = traceback.format_stack()
-
  #leaks   #memory
 (Ln:4 - <module> in ghostink/main.py)
 
@@ -160,7 +154,7 @@ def buster():
 
 ---
 
-## **`Ghosty`** cli
+## **`Ghosty`** cli: soon
 
 ---
 
