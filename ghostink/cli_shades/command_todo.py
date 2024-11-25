@@ -149,7 +149,7 @@ def todo(
         typer.Option(
             "--delete",
             "-d",
-            min=1,
+            min=0,
             show_default=False,
             help="delete a todo entry based on the id passed",
         ),

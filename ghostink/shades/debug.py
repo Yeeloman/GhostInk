@@ -4,7 +4,7 @@ from rich import print, pretty
 pretty.install()
 
 
-class Debug(BaseEntry):
+class _Debug(BaseEntry):
     def __init__(self, ghost_ink) -> None:
         self.DEBUG = ghost_ink.shade.DEBUG
         super().__init__(ghost_ink)

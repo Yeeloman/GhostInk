@@ -5,7 +5,7 @@ from rich.console import Console
 pretty.install()
 console = Console(stderr=True)
 
-class Error(BaseEntry):
+class _Error(BaseEntry):
     def __init__(self, ghost_ink) -> None:
         self.ERROR = ghost_ink.shade.ERROR
         super().__init__(ghost_ink)

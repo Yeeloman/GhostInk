@@ -7,6 +7,7 @@ from rich.text import Text
 from typing import Optional
 from rich.console import Console
 from typing_extensions import Annotated
+from .config import AppConfig
 from .cli_shades import (
     command_todo,
     command_info,
@@ -18,7 +19,6 @@ from .cli_shades import (
 # from .core import GhostInk
 
 __version__ = "0.1.0"
-APP_NAME = "ghosty"
 
 pretty.install()
 console = Console()
@@ -27,33 +27,11 @@ app = typer.Typer(
     help="To use ghosty you must set up the GHOSTINK (project root path).",
 )
 
-APP_DIR = Path(typer.get_app_dir(APP_NAME))
-APP_DIR.mkdir(exist_ok=True)
-CONFIG_FILE = APP_DIR / ".ghostink_config"
-
-
-def load_project_path() -> Optional[Path]:
-    """Load project path from GHOSTINK env variable or config file."""
-    if os.getenv("GHOSTINK"):
-        return Path(os.getenv("GHOSTINK"))
-    elif CONFIG_FILE.exists():
-        with open(CONFIG_FILE, "r") as file:
-            line = file.read().strip()
-            if line.startswith("GHOSTINK="):
-                path = line.split("=", 1)[1].strip().strip('"').strip("'")
-                return Path(path)
-    return None
-
-
-def save_project_path(path: Path):
-    """Save the project path to the config file."""
-    with open(CONFIG_FILE, "w") as file:
-        file.write(str(f"GHOSTINK='{path}'"))
-
+config = AppConfig()
 
 # Initialize project path from the environment or config
 GHOST_PATH = None
-PROJECT_PATH = load_project_path()
+PROJECT_PATH = config.load_project_path()
 
 
 @app.callback(invoke_without_command=True)
@@ -112,8 +90,8 @@ def ghosty(
     global GHOST_PATH
     if project_root:
         PROJECT_PATH = project_root.expanduser().resolve()
-        save_project_path(PROJECT_PATH)
-        GHOST_PATH = Path(PROJECT_PATH) / ".ghost" / group
+        config.save_project_path(PROJECT_PATH)
+        GHOST_PATH = config.get_app_dir() / PROJECT_PATH.name / group
 
     if not PROJECT_PATH:
         console.print(

@@ -4,6 +4,7 @@ import json
 import shutil
 import random
 import inspect
+from .config import AppConfig
 from enum import Enum
 from rich import pretty
 from pathlib import Path
@@ -11,10 +12,11 @@ from rich.text import Text
 from datetime import datetime
 from rich.console import Console
 from typing import List, Optional, Union
-from .shades import Todo, Info, Debug, Warn, Error
+from .shades import _Todo, _Info, _Debug, _Warn, _Error
 
 pretty.install()
 console = Console()
+config = AppConfig()
 
 
 class GhostInk:
@@ -53,12 +55,13 @@ class GhostInk:
         - title (str): The title of the instance (default: "GhostInk").
         - project_root (str): The root directory of the project (default: ".").
 
-        Sets up a logger if logging to a file is enabled.
         """
+
+        pr = os.getenv("GHOSTINK") or project_root
         self.title = title
         self.entries = set()
-        self.project_root = os.getenv("GHOSTINK") or project_root
-        self.Group = Path(self.project_root) / ".ghost" / self.title
+        self.project_root = Path(pr).resolve()
+        self.Group = config.get_app_dir() / self.project_root.name / self.title
 
         # alias the inkdrop/haunt method with just drop/ln
         self.drop = self.inkdrop
@@ -67,9 +70,8 @@ class GhostInk:
         self._create_entry_dir()
 
     def clean(self):
-        ghost_path = Path(self.project_root) / ".ghost"
-        if ghost_path.exists():
-            shutil.rmtree(ghost_path)
+        if self.Group.exists():
+            shutil.rmtree(self.Group)
 
     def haunt(self, message: str = None) -> None:
         """
@@ -90,10 +92,13 @@ class GhostInk:
         timestamp = datetime.now().strftime("%H:%M:%S")  # Time down to milliseconds
 
         output_text = Text()
+
         if message:
+            console.print("+ ", style="bright_yellow bold", end="")
             console.print(message)
             output_text.append(f"└── {caller_file}", style="bold yellow")
         else:
+            console.print("- ", style="bright_yellow bold", end="")
             output_text.append(f"{caller_file}", style="bold yellow")
 
         output_text.append(":", style="dim")
@@ -108,27 +113,49 @@ class GhostInk:
         entry_input: Union[str, None] = "Note: This is only the default message.",
         shade: Optional["GhostInk.shade"] = None,
         tags: Optional[List[str]] = None,
-        filename: Optional[str] = None,
     ) -> None:
-        if filename:
-            file_path = self.Group / f"{filename}.yml"
-            try:
-                with file_path.open("r") as file:
-                    entries_from_file = yaml.safe_load(file)
-                    for shade_from_file, entry_from_file in entries_from_file.items():
-                        shade_cls = ShadeRegistry.get_shade_class(
-                            self.shade[shade_from_file]
-                        )
-                        shade_instance = shade_cls(ghost_ink=self)
-                        shade_instance.dropper(entry_from_file)
-            except FileNotFoundError:
-                raise FileExistsError("The specified file do not exist")
-        else:
-            if shade is None:
-                shade = self.shade.TODO
-            shade_cls = ShadeRegistry.get_shade_class(shade)
-            shade_instance = shade_cls(ghost_ink=self)
-            shade_instance.inker(entry_input, shade, tags)
+        """
+        Adds an entry to the GhostInk instance with the specified shade and tags.
+
+        Parameters:
+        - entry_input (Union[str, None]): The content of the entry. Defaults to a predefined message.
+        - shade (Optional[GhostInk.shade]): The shade category for the entry. Defaults to TODO if not provided.
+        - tags (Optional[List[str]]): A list of tags associated with the entry.
+
+        Returns:
+        - None
+        """
+        if shade is None:
+            shade = self.shade.TODO
+        shade_cls = ShadeRegistry.get_shade_class(shade)
+        shade_instance = shade_cls(ghost_ink=self)
+        shade_instance.inker(entry_input, shade, tags)
+
+    def tabloid(self, filename: Optional[str] = None):
+        """
+        Loads entries from a YAML file and processes them using the appropriate shade class.
+
+        Parameters:
+        - filename (Optional[str]): The name of the YAML file (without extension) to load entries from.
+
+        Raises:
+        - FileExistsError: If the specified file does not exist.
+        """
+        if not filename:
+            self.ln("No filename provided.")
+            return
+        file_path = self.Group / f"{filename}.yml"
+        try:
+            with file_path.open("r") as file:
+                entries_from_file = yaml.safe_load(file)
+                for shade_from_file, entry_from_file in entries_from_file.items():
+                    shade_cls = ShadeRegistry.get_shade_class(
+                        self.shade[shade_from_file]
+                    )
+                    shade_instance = shade_cls(ghost_ink=self)
+                    shade_instance.dropper(entry_from_file)
+        except FileNotFoundError:
+            raise FileExistsError("The specified file do not exist")
 
     def whisper(
         self,
@@ -346,7 +373,7 @@ class GhostInk:
         ghost_dir_path = self.Group
         ghost_dir_path.mkdir(parents=True, exist_ok=True)
 
-        example_path = ghost_dir_path / "example.yml"
+        example_path: Path = ghost_dir_path / "example.yml"
         content = {
             "TODO": [
                 {
@@ -399,11 +426,11 @@ class GhostInk:
 class ShadeRegistry:
     # Dictionary mapping each shade Enum to its corresponding class
     shade_classes = {
-        GhostInk.shade.TODO: Todo,
-        GhostInk.shade.INFO: Info,
-        GhostInk.shade.DEBUG: Debug,
-        GhostInk.shade.WARN: Warn,
-        GhostInk.shade.ERROR: Error,
+        GhostInk.shade.TODO: _Todo,
+        GhostInk.shade.INFO: _Info,
+        GhostInk.shade.DEBUG: _Debug,
+        GhostInk.shade.WARN: _Warn,
+        GhostInk.shade.ERROR: _Error,
     }
 
     @classmethod

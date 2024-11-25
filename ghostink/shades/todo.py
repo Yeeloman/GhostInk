@@ -25,7 +25,7 @@ class TodoItemModel(BaseModel):
     subtasks: List[TodoSubtask] | None = None
 
 
-class Todo(BaseEntry):
+class _Todo(BaseEntry):
     def __init__(self, ghost_ink) -> None:
         self.TODO = ghost_ink.shade.TODO
         self.TITLE_COLOR = self.ColorMapper.get_color("title")
@@ -36,7 +36,7 @@ class Todo(BaseEntry):
         shade = self.TODO
         # Validate entry_obj with pydantic
         try:
-            validated_items = [TodoItemModel(**item) for item in entry_obj]
+            _ = [TodoItemModel(**item) for item in entry_obj]
         except ValidationError as e:
             error_details = json.loads(e.json())
             error_output = Text("")
@@ -54,7 +54,8 @@ class Todo(BaseEntry):
                 f"{self.TITLE_COLOR}{item['title']}{self.RESET} ({status_color}{status[0]}{self.RESET}/{priority_color}{priority[0]}{self.RESET})\n"
             )
             entry.append(f"{item['description']}\n")
-
+            if not hasattr(item, 'tags'):
+                item['tags'] = ""
             if isinstance(item["tags"], str):
                 tags_list = [item["tags"]]
             else:
@@ -85,3 +86,6 @@ class Todo(BaseEntry):
 
             if formatted_entry not in self.ghost_ink.entries:
                 self.ghost_ink.entries.add(formatted_entry)
+
+
+__all__=['_Todo']

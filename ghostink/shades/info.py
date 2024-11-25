@@ -4,7 +4,7 @@ from rich import print, pretty
 pretty.install()
 
 
-class Info(BaseEntry):
+class _Info(BaseEntry):
     def __init__(self, ghost_ink) -> None:
         self.INFO = ghost_ink.shade.INFO
         super().__init__(ghost_ink)

@@ -73,23 +73,26 @@ ink.whisper(filter_tag=["database"]) # str type can also be passed
    - **Parameters**:
      - `msg`: Optional message displayed before the file information.
 
-2. **`inkdrop(entry_input: any, Shade: Shade = Shade.TODO, tags: List[str] = [], filename: str = None)`**
-   - Adds a entry with text and a specific Shade to the entry list, or load a more detailed entry from a file .
+2. **`inkdrop(entry_input: any, Shade: Shade = Shade.TODO, tags: List[str] = []`**
+   - Adds an entry with text and a specific Shade to the entry list.
    - **Parameters**:
      - `entry_input`: Text, dictionary, or object to record as a entry.
      - `Shade`: entry Shade (TODO, INFO, DEBUG, WARN, ERROR).
      - `tags`: Tags for the task
-     - `filename`: The name of the file to load the entries from, the files are located in the *`project_root/.ghost/the title of the instance`*.
-   - Note: passing a filename takes precedence over the rest of parameters.
 
-3. **`whisper(filter_shade: str = None, filter_file: str = None, filter_tag: List[str] = None)`**  
+3. **`def tabloid(filename: Optional[str] = None):`**:
+   - Load a more detailed entry from a file.
+   - **Parameters**:
+     - `filename`: The name of the file to load the entries from, the files are located in the *`project_root/.ghost/the title of the instance`*.
+
+4. **`whisper(filter_shade: str = None, filter_file: str = None, filter_tag: List[str] = None)`**  
    - Prints filtered entries based on Shade and filename.
    - **Parameters**:
      - `filter_shade`: Filter entries by Shade.
      - `filter_file`: Filter entries by specific file name.
      - `filter_tag`: Filter entries by specific tag (Tag).
 
-4. **`get_shades(self):`**
+5. **`get_shades(self):`**
    - return all the shades
 
 ---

@@ -1,5 +1,7 @@
-import pytest
 import os
+import pytest
+import shutil
+from pathlib import Path
 from ghostink import GhostInk
 
 
@@ -13,10 +15,23 @@ def ghostink_instance():
 @pytest.fixture(scope="function", autouse=True)
 def clean_up_logs():
     yield
-    if os.path.exists("test_project/.ghost/TestInstance"):
-        for file in os.listdir("test_project/.ghost/TestInstance"):
-            os.remove(os.path.join("test_project/.ghost/TestInstance", file))
-        os.rmdir("test_project/.ghost/TestInstance")
+    base_path = Path("/home/yeeloman/.config/ghosty")
+    test_root_path = base_path / "test_root" / "TestTitle"
+
+    if test_root_path.exists():
+        for file in os.listdir(test_root_path):
+            file_path = test_root_path / file
+            if file_path.is_file():
+                os.remove(file_path)  # Remove individual files
+            elif file_path.is_dir():
+                shutil.rmtree(file_path)  # Remove directories recursively
+
+        # After cleaning, remove the TestTitle directory itself
+        if test_root_path.exists() and not os.listdir(test_root_path):  # Ensure empty
+            os.rmdir(test_root_path)
+        
+        if test_root_path.parent.exists():
+            os.rmdir(test_root_path.parent)
 
 
 @pytest.fixture
@@ -31,7 +46,7 @@ def test_initialization_with_env_var(monkeypatch):
     ink = GhostInk(title="TestTitle", project_root="ignored_root")
 
     assert ink.title == "TestTitle"
-    assert ink.project_root == "."
+    assert ink.project_root == Path(".").resolve()
     assert ink.entries == set()
 
 
@@ -40,7 +55,7 @@ def test_initialization_without_env_var(setup_env):
     ink = GhostInk(title="TestTitle", project_root="test_root")
 
     assert ink.title == "TestTitle"
-    assert ink.project_root == "test_root"
+    assert ink.project_root == Path("test_root").resolve()
     assert ink.entries == set()
 
 
@@ -129,8 +144,8 @@ def test_format_entry(ghostink_instance):
 
 
 def test_clean(ghostink_instance):
-    ghost_dir_path = os.path.join(ghostink_instance.project_root, ".ghost")
-    assert os.path.exists(ghost_dir_path)
+    ghost_dir_path = Path(ghostink_instance.Group)
+    assert ghost_dir_path.exists()
     ghostink_instance.clean()
     assert not os.path.exists(ghost_dir_path)
 
