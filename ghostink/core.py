@@ -46,21 +46,28 @@ class GhostInk:
     def __init__(
         self,
         title: str = "GhostInk",
-        project_root: str = ".",
     ):
         """
         Initializes a GhostInk instance with optional logging to a file.
 
         Parameters:
         - title (str): The title of the instance (default: "GhostInk").
-        - project_root (str): The root directory of the project (default: ".").
-
         """
+        self.project_root = config.load_project_path().resolve()
 
-        pr = os.getenv("GHOSTINK") or project_root
+        if not self.project_root:
+            # Print the error message and exit
+            console.print(
+                "[bold red]Error:[/bold red] GHOSTINK environment variable not set and no valid path found.\n"
+                "Please set the project path using one of the following methods:\n"
+                '1. Export the GHOSTINK variable: [bold]export GHOSTINK="~/path/to/project_root"[/bold]\n'
+                "2. Use the [bold]ghosty[/bold] CLI tool to set up the GHOSTINK path: [bold]ghosty --set-path /path/to/project_root[/bold]\n",
+
+                soft_wrap=True,
+            )
+            raise SystemExit(1)
         self.title = title
         self.entries = set()
-        self.project_root = Path(pr).resolve()
         self.Group = config.get_app_dir() / self.project_root.name / self.title
 
         # alias the inkdrop/haunt method with just drop/ln
@@ -145,6 +152,7 @@ class GhostInk:
             self.ln("No filename provided.")
             return
         file_path = self.Group / f"{filename}.yml"
+        console.print(file_path)
         try:
             with file_path.open("r") as file:
                 entries_from_file = yaml.safe_load(file)

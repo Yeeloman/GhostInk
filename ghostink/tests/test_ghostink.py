@@ -8,7 +8,7 @@ from ghostink import GhostInk
 # Initial setup for testing the GhostInk class
 @pytest.fixture
 def ghostink_instance():
-    return GhostInk(title="TestInstance", project_root="test_project")
+    return GhostInk(title="TestInstance")
 
 
 # Teardown: clean up generated logs after tests
@@ -29,7 +29,7 @@ def clean_up_logs():
         # After cleaning, remove the TestTitle directory itself
         if test_root_path.exists() and not os.listdir(test_root_path):  # Ensure empty
             os.rmdir(test_root_path)
-        
+
         if test_root_path.parent.exists():
             os.rmdir(test_root_path.parent)
 
@@ -43,19 +43,17 @@ def setup_env(monkeypatch):
 def test_initialization_with_env_var(monkeypatch):
     # Set GHOSTINK to a custom value
     monkeypatch.setenv("GHOSTINK", ".")
-    ink = GhostInk(title="TestTitle", project_root="ignored_root")
+    ink = GhostInk(title="TestTitle")
 
     assert ink.title == "TestTitle"
-    assert ink.project_root == Path(".").resolve()
     assert ink.entries == set()
 
 
 def test_initialization_without_env_var(setup_env):
     # Without GHOSTINK, it should use the provided project_root
-    ink = GhostInk(title="TestTitle", project_root="test_root")
+    ink = GhostInk(title="TestTitle")
 
     assert ink.title == "TestTitle"
-    assert ink.project_root == Path("test_root").resolve()
     assert ink.entries == set()
 
 
@@ -122,14 +120,6 @@ def test_format_entry_from_object(ghostink_instance):
     obj_input = CustomObj()
     formatted = ghostink_instance._format_entry_from_object(obj_input)
     assert '"attr": "test"' in formatted
-
-
-# def test_format_tags(ghostink_instance):
-#     tags = ["tag1", " tag2", "#tag3"]
-#     formatted = ghostink_instance._format_tags(tags)
-#     assert "#tag1" in formatted
-#     assert "#tag2" in formatted
-#     assert "#tag3" not in formatted  # Excludes tags with `#`
 
 
 def test_format_entry(ghostink_instance):

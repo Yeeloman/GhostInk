@@ -1,10 +1,9 @@
 import json
 from rich import pretty
+from typing import List
 from rich.text import Text
 from .base import BaseEntry
-from itertools import chain
 from rich.console import Console
-from typing import List
 from pydantic import BaseModel, Field, ValidationError
 
 pretty.install()
@@ -54,8 +53,9 @@ class _Todo(BaseEntry):
                 f"{self.TITLE_COLOR}{item['title']}{self.RESET} ({status_color}{status[0]}{self.RESET}/{priority_color}{priority[0]}{self.RESET})\n"
             )
             entry.append(f"{item['description']}\n")
+
             if not hasattr(item, 'tags'):
-                item['tags'] = ""
+                item['tags'] = [""]
             if isinstance(item["tags"], str):
                 tags_list = [item["tags"]]
             else:

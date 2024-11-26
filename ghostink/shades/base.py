@@ -69,7 +69,7 @@ class BaseEntry:
             self.ghost_ink.entries.add(formatted_entry)
 
     def _format_tags(self, tags: List[str] = []) -> tuple:
-        if not tags:
+        if not tags or tags == [""]:
             return ()
 
         formatted_tags = []
