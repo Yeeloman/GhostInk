@@ -29,11 +29,10 @@ To start, create a `GhostInk` instance with optional parameters:
 ```python
 ink = GhostInk(
     title="My Project Debugger",
-    project_root=".",  # Set the project root for relative path display
 )
 ```
 
-The environment variable `GHOSTINK` takes precedence over directly passing `project_root` argument during initialization.
+The environment variable `GHOSTINK` takes precedence over the path specified in `~/.config/ghosty/.ghostink_config`. You can set it by exporting GHOSTINK or using the **`ghosty`** CLI tool with **--set-path**.
 
 ### Adding entries (tasks) with Shades
 
@@ -83,7 +82,7 @@ ink.whisper(filter_tag=["database"]) # str type can also be passed
 3. **`def tabloid(filename: Optional[str] = None):`**:
    - Load a more detailed entry from a file.
    - **Parameters**:
-     - `filename`: The name of the file to load the entries from, the files are located in the *`project_root/.ghost/the title of the instance`*.
+     - `filename`: The name of the file to load the entries from, the files are located in the *`~/.config/ghosty/project_root(basename)/instance_title/`*.
 
 4. **`whisper(filter_shade: str = None, filter_file: str = None, filter_tag: List[str] = None)`**  
    - Prints filtered entries based on Shade and filename.
