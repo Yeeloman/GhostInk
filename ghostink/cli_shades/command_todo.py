@@ -12,7 +12,7 @@ from typing_extensions import Annotated
 pretty.install()
 console = Console()
 
-FILE_PATH = None
+FILE_PATH: Path = None
 
 
 def create_todo_entry() -> None:
@@ -173,6 +173,9 @@ def todo(
     FILE_PATH = ghost_path / f"{filename}.yml"
 
     if edit_file:
+        if not FILE_PATH.exists():
+            console.print(f'Specified file does not exist {FILE_PATH}', style='bright_red')
+            raise typer.Exit(-1)
         editor = os.getenv("EDITOR")
         if editor:
             subprocess.run([editor, FILE_PATH])

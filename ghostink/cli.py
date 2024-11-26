@@ -116,7 +116,7 @@ def ghosty(
             console.print(file_list)
         raise typer.Exit()
     if show_path:
-        console.print(f".ghost dir in: {GHOST_PATH}")
+        console.print(f"{GHOST_PATH}")
         raise typer.Exit()
     ctx.obj = {"GHOST_PATH": GHOST_PATH}
     GHOST_PATH.mkdir(parents=True, exist_ok=True)
